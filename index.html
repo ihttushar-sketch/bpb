@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#e10600">
+<meta name="description" content="BikePartsBD.net — Kayi Corporation Inventory OS: live inventory, courier tracking, vendor contacts, returns, analytics & printable reports. Jashore, Bangladesh.">
 <title>BikePartsBD.net — Inventory OS | Kayi Corporation, Jashore</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -656,6 +658,10 @@ select.btn{
           <h2>🛵 কুরিয়ার ট্র্যাকিং <span class="en">Courier Tracking — 5-stage timeline</span></h2>
           <p class="sub">Sundarban · SA Paribahan · Karotoa · Janani · eCourier · Pathao — প্রতি কুরিয়ারের গ্রস রেভিনিউ ও গ্রস প্রফিট। <span class="en">Per-courier gross revenue &amp; gross profit.</span></p>
           <button class="btn" id="exportOrdersCsv" style="margin-top:10px">⬇ অর্ডার CSV <span class="en">Export Orders</span></button>
+        </div>
+        <div class="toolbar card">
+          <input type="text" id="searchOrders" placeholder="🔍 অর্ডার খুঁজুন — Search by order ID, customer, part, city…">
+          <span style="font-size:12px;color:var(--faint)">লাইভ অর্ডার বুক — <span class="en">Live order book</span></span>
         </div>
         <div class="courier-grid" id="courierCards"></div>
         <div class="card table-wrap">
@@ -1382,7 +1388,9 @@ function renderCourier(){
     </div>`;
   }).join('');
 
-  $('#orderBody').innerHTML = orders.map(o => {
+  const q = (state.orderSearch || '').toLowerCase();
+  const rows = orders.filter(o => !q || (o.id + ' ' + o.custEn + ' ' + o.custBn + ' ' + o.city + ' ' + o.partName + ' ' + o.partBn).toLowerCase().includes(q));
+  $('#orderBody').innerHTML = rows.map(o => {
     const c = COURIER_BY_ID[o.courier];
     const src = SOURCES[o.source];
     const fillPct = (o.stage/4*100).toFixed(0);
@@ -1419,8 +1427,13 @@ function renderCourier(){
     </tr>`;
   }).join('');
 
-  $('#orderBody').innerHTML = $('#orderBody').innerHTML || `<tr><td colspan="9"><div class="empty">কোনো অর্ডার নেই — সিমুলেশন শুরু করুন।</div></td></tr>`;
+  $('#orderBody').innerHTML = $('#orderBody').innerHTML || `<tr><td colspan="9"><div class="empty">কোনো অর্ডার নেই — সিমুলেশন শুরু করুন।<br><span class="en">No orders match.</span></div></td></tr>`;
 }
+
+$('#searchOrders').addEventListener('input', e => {
+  state.orderSearch = e.target.value;
+  renderCourier();
+});
 
 $('#orderBody').addEventListener('click', e => {
   const retBtn = e.target.closest('[data-ret]');
@@ -1964,7 +1977,7 @@ $('#simToggleMobile').addEventListener('click', () => sim.running ? stopSim() : 
 /* =====================================================
    TABS · SEARCH · FILTERS · THEME
    ===================================================== */
-const state = {brandFilter:'All', search:'', lowOnly:false};
+const state = {brandFilter:'All', search:'', lowOnly:false, orderSearch:''};
 
 $$('.tabs button').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -2000,6 +2013,8 @@ function applyTheme(t){
   const dark = t === 'dark';
   $('#themeIcon').textContent = dark ? '☀️' : '🌙';
   $('#themeLabel').textContent = dark ? 'লাইট মোড' : 'ডার্ক মোড';
+  const tc = document.querySelector('meta[name="theme-color"]');
+  if (tc) tc.setAttribute('content', dark ? '#0c0e13' : '#e10600');
 }
 $('#themeToggle').addEventListener('click', () => {
   applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
