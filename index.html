@@ -456,6 +456,26 @@ select.btn{
 .v-form-actions{display:flex;gap:10px;flex-wrap:wrap}
 .v-edit{margin-left:auto}
 
+/* ============ Analytics ============ */
+.an-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.bar-row{display:grid;grid-template-columns:88px 1fr 78px;gap:9px;align-items:center;margin-bottom:8px;font-size:12px}
+.bar-lbl{font-weight:600;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-track{height:12px;background:var(--card2);border:1px solid var(--border);border-radius:99px;overflow:hidden}
+.bar-fill{height:100%;background:var(--red);border-radius:99px;transition:width .35s ease;min-width:3px}
+.bar-val{font-family:var(--mono);font-size:10.5px;font-weight:700;text-align:right;white-space:nowrap}
+.chart-empty{padding:18px 6px;text-align:center;color:var(--faint);font-size:12.5px}
+@media (max-width:900px){.an-grid{grid-template-columns:1fr}}
+
+/* ============ Report ============ */
+.rep-brand{display:flex;gap:14px;align-items:center}
+.rep-logo{
+  width:52px;height:52px;border-radius:14px;background:var(--red);color:#fff;
+  display:grid;place-items:center;font-weight:800;font-size:17px;flex:0 0 auto;
+  box-shadow:0 4px 12px rgba(225,6,0,.35);
+}
+.rep-brand h2{font-size:20px;font-weight:800;letter-spacing:-.3px}
+.rep-brand p{font-size:12.5px;color:var(--muted);margin-top:3px}
+
 /* ============ Responsive ============ */
 /* Tablet 600-1100 */
 @media (max-width:1100px){
@@ -489,6 +509,27 @@ select.btn{
   .mobile-actions{display:flex}
   body.has-mobile-actions{padding-bottom:76px}
   .tabs button{padding:9px 14px}
+}
+
+/* ============ Print view ============ */
+@media print{
+  :root{
+    --bg:#fff;--card:#fff;--card2:#f5f6f8;--text:#101318;--muted:#444c59;--faint:#6a7282;
+    --border:#d5d9e0;--border2:#c3c8d2;--red:#e10600;--red-soft:rgba(225,6,0,.08);
+    --green:#0f9d58;--green-soft:rgba(15,157,88,.12);
+  }
+  body{background:#fff !important}
+  .topbar,.tabs,.side,.mobile-actions,footer,.no-print,#toasts{display:none !important}
+  .tab{display:none !important}
+  #tab-report{display:block !important}
+  .app{max-width:100%;padding:0;margin:0}
+  .layout{display:block}
+  .card{box-shadow:none;break-inside:avoid}
+  .table-wrap{overflow:visible}
+  table{min-width:0}
+  thead th{background:#f0f1f4;color:#111}
+  .kpi{box-shadow:none}
+  @page{margin:14mm}
 }
 </style>
 </head>
@@ -530,6 +571,18 @@ select.btn{
         <button data-tab="vendors" role="tab">
           <span class="t-ico">📞</span>
           <span class="tb"><span>ভেন্ডর</span><small>Vendors</small></span>
+        </button>
+        <button data-tab="returns" role="tab">
+          <span class="t-ico">↩️</span>
+          <span class="tb"><span>রিটার্ন</span><small>Returns</small></span>
+        </button>
+        <button data-tab="analytics" role="tab">
+          <span class="t-ico">📊</span>
+          <span class="tb"><span>অ্যানালিটিক্স</span><small>Analytics</small></span>
+        </button>
+        <button data-tab="report" role="tab">
+          <span class="t-ico">🖨️</span>
+          <span class="tb"><span>রিপোর্ট</span><small>Report</small></span>
         </button>
       </nav>
 
@@ -630,6 +683,72 @@ select.btn{
         </div>
         <div class="vendor-grid" id="vendorCards"></div>
       </section>
+
+      <!-- ============ RETURNS ============ -->
+      <section id="tab-returns" class="tab">
+        <div class="sec-head">
+          <h2>↩️ রিটার্ন ও ফেরত <span class="en">Returns &amp; Refunds</span></h2>
+          <p class="sub">ডেলিভারড অর্ডার রিটার্ন করলে স্টক অটো ফিরে আসবে এবং কুরিয়ার রেভিনিউ থেকে বাদ যাবে। <span class="en">Returning a delivered order restores stock and removes it from revenue.</span></p>
+        </div>
+        <div class="kpis" id="retKpis"></div>
+        <div class="card table-wrap">
+          <h3>↩️ রিটার্ন তালিকা <span class="en">Returned Orders</span></h3>
+          <table>
+            <thead>
+              <tr>
+                <th>অর্ডার <span class="en">Order</span></th>
+                <th>পার্ট <span class="en">Part</span></th>
+                <th class="num">Qty</th>
+                <th class="num">ভ্যালু <span class="en">Value</span></th>
+                <th>কুরিয়ার <span class="en">Courier</span></th>
+                <th class="hide-m">সোর্স <span class="en">Source</span></th>
+                <th>রিটার্নের সময় <span class="en">Returned At</span></th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="retBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============ ANALYTICS ============ -->
+      <section id="tab-analytics" class="tab">
+        <div class="sec-head">
+          <h2>📊 অ্যানালিটিক্স <span class="en">Analytics — live charts</span></h2>
+          <p class="sub">ডেলিভারড অর্ডার থেকে লাইভ হিসাব — সিমুলেশন চললে চার্ট আপডেট হয়। <span class="en">Computed from delivered orders; updates as the simulation runs.</span></p>
+        </div>
+        <div class="kpis" id="anKpis"></div>
+        <div class="an-grid">
+          <div class="card"><h3>📅 ৭ দিনের বিক্রয় <span class="en">Sales — last 7 days</span></h3><div id="anDaily"></div></div>
+          <div class="card"><h3>📡 সোর্স অনুযায়ী রেভিনিউ <span class="en">Revenue by Source</span></h3><div id="anSource"></div></div>
+          <div class="card"><h3>🛵 কুরিয়ার অনুযায়ী রেভিনিউ <span class="en">Revenue by Courier</span></h3><div id="anCourier"></div></div>
+          <div class="card"><h3>🗂️ ক্যাটাগরি শেয়ার <span class="en">Category Share (units)</span></h3><div id="anCat"></div></div>
+        </div>
+        <div class="card table-wrap">
+          <h3>🏆 টপ পার্টস <span class="en">Top Parts by Units Sold</span></h3>
+          <table>
+            <thead>
+              <tr>
+                <th class="num">#</th>
+                <th>পার্ট <span class="en">Part</span></th>
+                <th class="num">ইউনিট <span class="en">Units</span></th>
+                <th class="num">রেভিনিউ <span class="en">Revenue</span></th>
+                <th class="num hide-t">প্রফিট <span class="en">Profit</span></th>
+              </tr>
+            </thead>
+            <tbody id="anTop"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============ REPORT (print view) ============ -->
+      <section id="tab-report" class="tab">
+        <div class="card rep-actions no-print" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+          <button id="printReport" class="btn-red">🖨️ প্রিন্ট / সেভ PDF <span class="en">Print / Save as PDF</span></button>
+          <span style="font-size:12.5px;color:var(--muted)">প্রিন্ট ভিউ — শুধু রিপোর্ট প্রিন্ট হবে, বাকি UI হাইড থাকবে। <span class="en">Print view shows the report only.</span></span>
+        </div>
+        <div id="reportRoot"></div>
+      </section>
     </main>
 
     <!-- ================= SIDE PANEL (360px) ================= -->
@@ -664,9 +783,12 @@ select.btn{
       <span class="f-logo">BP</span>
       <span>BikePartsBD<span style="color:var(--red)">.</span>net</span>
       <span>© 2026 Kayi Corporation · Jashore, Bangladesh</span>
+      <span id="rateInfo" style="font-size:11px;color:var(--faint)">💱 রেট সোর্স: —</span>
     </div>
     <div>
       <a href="https://bikepartsbd.net" target="_blank" rel="noopener">bikepartsbd.net</a>
+      <span style="margin:0 8px;opacity:.4">|</span>
+      <button class="reset-btn" id="printReportLink">🖨️ রিপোর্ট প্রিন্ট <span class="en" style="font-size:10px">Print Report</span></button>
       <span style="margin:0 8px;opacity:.4">|</span>
       <button class="reset-btn" id="resetDemo">↺ ডেমো ডেটা রিসেট <span class="en" style="font-size:10px">Reset Demo Data</span></button>
     </div>
@@ -769,20 +891,47 @@ const money = n => {
   const fmt = x => c.sym + x.toLocaleString('en-IN', {minimumFractionDigits:c.dec, maximumFractionDigits:c.dec});
   return v < 0 ? '-' + fmt(Math.abs(v)) : fmt(v);
 };
+function applyRates(ratesObj, src){
+  const map = {USD:ratesObj.USD, EUR:ratesObj.EUR, GBP:ratesObj.GBP, INR:ratesObj.INR};
+  let ok = false;
+  Object.keys(map).forEach(k => {
+    if (isFinite(map[k]) && map[k] > 0){ CURRENCIES[k].rate = map[k]; ok = true; }
+  });
+  if (ok){
+    store.set('bpbd_rates', {t: Date.now(), src, r: map});
+    updateRateInfo(src);
+    renderAll();
+  } else {
+    updateRateInfo('ফলব্যাক');
+  }
+}
+function updateRateInfo(src){
+  const el = $('#rateInfo');
+  if (!el) return;
+  const t = new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  el.innerHTML = `💱 রেট: ${esc(src || 'ডিফল্ট')} · ${t} <span class="en" style="font-size:10px">rates</span>`;
+}
 function fetchRates(){
+  const openErFallback = () => {
+    try{
+      fetch('https://open.er-api.com/v6/latest/BDT')
+        .then(r => r.json())
+        .then(d => {
+          if (d && d.result === 'success' && d.rates) applyRates(d.rates, 'open.er-api.com');
+          else updateRateInfo('ফলব্যাক');
+        })
+        .catch(() => updateRateInfo('ফলব্যাক'));
+    }catch(e){ updateRateInfo('ফলব্যাক'); }
+  };
   try{
-    fetch('https://open.er-api.com/v6/latest/BDT')
+    fetch('https://api.frankfurter.app/latest?from=BDT&to=USD,EUR,GBP,INR')
       .then(r => r.json())
       .then(d => {
-        if (d && d.result === 'success' && d.rates){
-          const r = {USD:d.rates.USD, EUR:d.rates.EUR, GBP:d.rates.GBP, INR:d.rates.INR};
-          Object.keys(r).forEach(k => { if (CURRENCIES[k] && isFinite(r[k]) && r[k] > 0) CURRENCIES[k].rate = r[k]; });
-          store.set('bpbd_rates', {t: Date.now(), r});
-          renderAll();
-        }
+        if (d && d.rates && d.rates.USD) applyRates(d.rates, 'frankfurter.app');
+        else openErFallback();
       })
-      .catch(() => {});
-  }catch(e){}
+      .catch(openErFallback);
+  }catch(e){ openErFallback(); }
 }
 const pct = (a,b) => b ? (a/b*100).toFixed(1) + '%' : '—';
 const timeStr = () => new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
@@ -972,12 +1121,24 @@ function seedOrders(){
     mkOrder(P('BP-1018'), 1, 'messenger', 'karotoa',   1, 8)
   ];
 }
-if (!orders){ orders = seedOrders(); }
+let ordersSeeded = false;
+if (!orders){ orders = seedOrders(); ordersSeeded = true; }
 orderSeq = orders.reduce((m,o) => Math.max(m, parseInt(o.id.replace(/\D/g,'')) || 0), 1000);
 store.set('bpbd_v', DATA_V);
 const orderTotal = o => o.qty * o.unit;
 const orderProfit = o => o.qty * o.profitUnit;
-const isDelivered = o => o.stage === 4;
+const isDelivered = o => o.stage === 4 && o.status !== 'returned';
+const isReturned = o => o.status === 'returned';
+// seed one returned order so the Returns module is discoverable (fresh seed only)
+if (ordersSeeded){
+  const ro = orders.find(o => o.id === 'BP-ORD-1001');
+  if (ro && !isReturned(ro)){
+    ro.status = 'returned';
+    ro.returnedAt = new Date(Date.now() - 3*3600e3).toISOString();
+    const rp = parts.find(p => p.id === ro.partId);
+    if (rp) rp.stock += ro.qty;
+  }
+}
 
 /* ---------- simulation state ---------- */
 let sim = { running:false, timer:null };
@@ -1003,6 +1164,9 @@ function renderAll(force){
   renderVendors();
   renderSide();
   renderFeed();
+  if ($('#tab-returns').classList.contains('active')) renderReturns();
+  if ($('#tab-analytics').classList.contains('active')) renderAnalytics();
+  if ($('#tab-report').classList.contains('active')) renderReport();
 }
 
 /* =====================================================
@@ -1173,14 +1337,17 @@ $('#invBody').addEventListener('click', e => {
 function courierStats(cid){
   const list = orders.filter(o => o.courier === cid);
   const del = list.filter(isDelivered);
-  const pipe = list.filter(o => !isDelivered(o));
+  const ret = list.filter(isReturned);
+  const pipe = list.filter(o => !isDelivered(o) && !isReturned(o));
   return {
     n: list.length,
     delivered: del.length,
     revenue: del.reduce((s,o) => s + orderTotal(o), 0),
     profit: del.reduce((s,o) => s + orderProfit(o), 0),
     pipeline: pipe.reduce((s,o) => s + orderTotal(o), 0),
-    pipelineN: pipe.length
+    pipelineN: pipe.length,
+    retN: ret.length,
+    retVal: ret.reduce((s,o) => s + orderTotal(o), 0)
   };
 }
 
@@ -1197,10 +1364,13 @@ function renderCourier(){
         <div class="c-stat prof"><div class="s-label">গ্রস প্রফিট <span class="en">Gross Profit</span></div><div class="s-value">${money(s.profit)}</div></div>
         <div class="c-stat"><div class="s-label">পাইপলাইনে <span class="en">Pipeline Value</span></div><div class="s-value">${money(s.pipeline)}</div></div>
         <div class="c-stat"><div class="s-label">অর্ডার <span class="en">Orders</span></div><div class="s-value">${s.n}</div></div>
+        <div class="c-stat"><div class="s-label">ডেলিভারড <span class="en">Delivered</span></div><div class="s-value">${s.delivered}</div></div>
+        <div class="c-stat"><div class="s-label">↩️ রিটার্ন <span class="en">Returns</span></div><div class="s-value">${s.retN} <span style="font-size:10.5px;color:var(--faint);font-family:var(--mono)">${money(s.retVal)}</span></div></div>
       </div>
       <div class="c-badges">
         <span class="badge stock-ok">✓ ${s.delivered} ডেলিভারড <span class="en">Delivered</span></span>
         <span class="badge ${s.pipelineN ? '' : 'stock-ok'}">${s.pipelineN} পথে <span class="en">In flight</span></span>
+        ${s.retN ? `<span class="badge stock-low">↩️ ${s.retN} রিটার্ন <span class="en">Returned</span></span>` : ''}
       </div>
     </div>`;
   }).join('');
@@ -1232,8 +1402,13 @@ function renderCourier(){
           </div>
         </div>
       </td>
-      <td class="num" style="color:${o.stage===4 ? 'var(--green)' : 'var(--text)'}">${money(orderTotal(o))}</td>
-      <td>${o.stage < 4 ? `<button class="adv-btn" data-adv="${o.id}" title="পরবর্তী ধাপে / Advance">→ এগিয়ে নিন</button>` : `<span class="badge stock-ok">✓ সম্পন্ন</span>`}</td>
+      <td class="num" style="color:${o.status==='returned' ? 'var(--red)' : (o.stage===4 ? 'var(--green)' : 'var(--text)')}">${money(orderTotal(o))}</td>
+      <td style="white-space:nowrap">${o.status === 'returned'
+        ? `<span class="badge stock-low">↩️ রিটার্নড <span class="en">Returned</span></span>`
+        : o.stage < 4
+          ? `<button class="adv-btn" data-adv="${o.id}" title="পরবর্তী ধাপে / Advance">→ এগিয়ে নিন</button>`
+          : `<span class="badge stock-ok">✓ সম্পন্ন</span> <button class="adv-btn" data-ret="${o.id}" title="রিটার্ন / Return">↩️</button>`}
+      </td>
     </tr>`;
   }).join('');
 
@@ -1241,6 +1416,12 @@ function renderCourier(){
 }
 
 $('#orderBody').addEventListener('click', e => {
+  const retBtn = e.target.closest('[data-ret]');
+  if (retBtn){
+    const o = orders.find(x => x.id === retBtn.dataset.ret);
+    if (o) markReturned(o);
+    return;
+  }
   const btn = e.target.closest('[data-adv]');
   if (!btn) return;
   const o = orders.find(x => x.id === btn.dataset.adv);
@@ -1263,6 +1444,245 @@ function advanceOrder(o, manual){
   renderCourier(); renderSide();
   if (manual) toast(`🛵 ${esc(o.id)} → ${STAGES[o.stage].bn} <span class="en" style="font-size:11px;opacity:.8">${STAGES[o.stage].en}</span>`);
 }
+
+/* ---------- returns ---------- */
+function markReturned(o, silent){
+  if (!o || isReturned(o) || o.stage !== 4) return;
+  o.status = 'returned';
+  o.returnedAt = new Date().toISOString();
+  const p = parts.find(x => x.id === o.partId);
+  if (p){ p.stock += o.qty; pendingFlash = {id:p.id, field:'stock', delta:+o.qty}; }
+  saveAll();
+  feedLog('ret', 'var(--red)', `↩️ <b>${esc(o.id)}</b> রিটার্ন — ${esc(o.partName)} ×${o.qty} (${money(orderTotal(o))}) · স্টক ফেরত +${o.qty}`);
+  if (!silent) toast(`↩️ ${esc(o.id)} রিটার্ন হয়েছে — স্টক +${o.qty} <span class="en" style="font-size:11px;opacity:.8">Returned · stock restored</span>`, 'red');
+  renderAll();
+}
+function undoReturn(o){
+  if (!o || !isReturned(o)) return;
+  o.status = undefined;
+  o.returnedAt = null;
+  const p = parts.find(x => x.id === o.partId);
+  if (p){ p.stock = Math.max(0, p.stock - o.qty); pendingFlash = {id:p.id, field:'stock', delta:-o.qty}; }
+  saveAll();
+  feedLog('ret', 'var(--green)', `↩️ আনডু — <b>${esc(o.id)}</b> আবার ডেলিভারড হিসেবে গণ্য · স্টক −${o.qty}`);
+  toast(`↩️ ${esc(o.id)} আনডু হয়েছে <span class="en" style="font-size:11px;opacity:.8">Return undone</span>`);
+  renderAll();
+}
+function renderReturns(){
+  const ret = orders.filter(isReturned);
+  const del = orders.filter(o => o.stage === 4);
+  const retVal = ret.reduce((s,o) => s + orderTotal(o), 0);
+  const retUnits = ret.reduce((s,o) => s + o.qty, 0);
+  const rate = del.length ? (ret.length / del.length * 100).toFixed(1) + '%' : '0%';
+  $('#retKpis').innerHTML = `
+    <div class="kpi red"><div class="k-label">মোট রিটার্ন <span class="en">Total Returns</span></div><div class="k-value mono">${ret.length}</div></div>
+    <div class="kpi red"><div class="k-label">রিটার্ন ভ্যালু <span class="en">Returned Value</span></div><div class="k-value mono">${money(retVal)}</div></div>
+    <div class="kpi"><div class="k-label">ফেরত ইউনিট <span class="en">Units Restocked</span></div><div class="k-value mono">${retUnits}</div></div>
+    <div class="kpi"><div class="k-label">রিটার্ন রেট <span class="en">Return Rate</span></div><div class="k-value mono">${rate}</div></div>
+    <div class="kpi green"><div class="k-label">ডেলিভারড (সব) <span class="en">Delivered (all)</span></div><div class="k-value mono">${del.length}</div></div>`;
+  $('#retBody').innerHTML = ret.length ? ret.map(o => `
+    <tr>
+      <td><span class="sku">${o.id}</span></td>
+      <td style="max-width:200px"><div style="font-weight:600;font-size:13px">${esc(o.partName)}</div><div style="font-size:11.5px;color:var(--muted)">${esc(o.partBn)}</div></td>
+      <td class="num mono">×${o.qty}</td>
+      <td class="num" style="color:var(--red)">${money(orderTotal(o))}</td>
+      <td style="font-size:12.5px">${COURIER_BY_ID[o.courier].icon} ${esc(COURIER_BY_ID[o.courier].en)}</td>
+      <td class="hide-m"><span class="src src-${o.source}">${SOURCES[o.source].en}</span></td>
+      <td style="font-size:12px;color:var(--muted)">${o.returnedAt ? dtStr(o.returnedAt) : '—'}</td>
+      <td><button class="adv-btn" data-undo-ret="${o.id}" title="আবার ডেলিভারড করুন / Undo">↩️ আনডু</button></td>
+    </tr>`).join('')
+    : `<tr><td colspan="8"><div class="empty">কোনো রিটার্ন নেই ✓ — কুরিয়ার ট্যাবে ডেলিভারড অর্ডারে ↩️ চাপুন।<br><span class="en">No returns yet — press ↩️ on a delivered order in the Courier tab.</span></div></td></tr>`;
+}
+$('#retBody').addEventListener('click', e => {
+  const b = e.target.closest('[data-undo-ret]');
+  if (b){ const o = orders.find(x => x.id === b.dataset.undoRet); if (o) undoReturn(o); }
+});
+
+/* ---------- analytics ---------- */
+function moneyShort(n){
+  const c = curInfo();
+  const v = n * c.rate;
+  const num = Math.abs(v) >= 1000 ? (v/1000).toFixed(1) + 'k' : (Math.abs(v) >= 100 ? v.toFixed(0) : v.toFixed(c.dec));
+  return c.sym + num;
+}
+function barRow(label, value, max, color){
+  const w = max > 0 ? Math.max(3, value / max * 100) : 0;
+  return `<div class="bar-row">
+    <span class="bar-lbl" title="${esc(label)}">${esc(label)}</span>
+    <span class="bar-track"><span class="bar-fill" style="width:${w}%;background:${color || 'var(--red)'}"></span></span>
+    <span class="bar-val">${moneyShort(value)}</span>
+  </div>`;
+}
+function analytics(){
+  const del = orders.filter(isDelivered);
+  const ret = orders.filter(isReturned);
+  const revenue = del.reduce((s,o) => s + orderTotal(o), 0);
+  const profit = del.reduce((s,o) => s + orderProfit(o), 0);
+  const units = del.reduce((s,o) => s + o.qty, 0);
+  const now = new Date();
+  const days = [];
+  for (let i = 6; i >= 0; i--){
+    const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+    const key = d.toISOString().slice(0,10);
+    const rev = del.filter(o => o.ts[4].slice(0,10) === key).reduce((s,o) => s + orderTotal(o), 0);
+    days.push({label: d.toLocaleDateString('bn-BD',{weekday:'short'}) + ' ' + d.getDate(), rev});
+  }
+  const bySource = Object.keys(SOURCES).map(k => ({k, v: del.filter(o => o.source === k).reduce((s,o) => s + orderTotal(o), 0)}));
+  const byCourier = COURIERS.map(c => ({c, v: del.filter(o => o.courier === c.id).reduce((s,o) => s + orderTotal(o), 0)}));
+  const pm = new Map();
+  del.forEach(o => {
+    const e = pm.get(o.partName) || {name:o.partName, bn:o.partBn, units:0, rev:0, prof:0};
+    e.units += o.qty; e.rev += orderTotal(o); e.prof += orderProfit(o);
+    pm.set(o.partName, e);
+  });
+  const top = [...pm.values()].sort((a,b) => b.units - a.units).slice(0,5);
+  const catUnits = new Map();
+  del.forEach(o => {
+    const p = parts.find(x => x.id === o.partId);
+    const cat = p ? p.category : 'Other';
+    catUnits.set(cat, (catUnits.get(cat) || 0) + o.qty);
+  });
+  const totalCat = [...catUnits.values()].reduce((s,v) => s+v, 0);
+  const cats = [...catUnits.entries()].map(([k,v]) => ({k, v, pct: totalCat ? v/totalCat*100 : 0})).sort((a,b) => b.v - a.v);
+  const denom = del.length + ret.length;
+  return {
+    revenue, profit, delN: del.length, units,
+    retN: ret.length, retVal: ret.reduce((s,o) => s + orderTotal(o), 0),
+    retRate: denom ? ret.length / denom * 100 : 0,
+    aov: del.length ? revenue / del.length : 0,
+    days, bySource, byCourier, top, cats
+  };
+}
+function renderAnalytics(){
+  const a = analytics();
+  $('#anKpis').innerHTML = `
+    <div class="kpi red"><div class="k-label">মোট রেভিনিউ <span class="en">Total Revenue</span></div><div class="k-value mono">${money(a.revenue)}</div></div>
+    <div class="kpi green"><div class="k-label">গ্রস প্রফিট <span class="en">Gross Profit</span></div><div class="k-value mono">${money(a.profit)}</div></div>
+    <div class="kpi"><div class="k-label">ডেলিভারড অর্ডার <span class="en">Delivered Orders</span></div><div class="k-value mono">${a.delN}</div></div>
+    <div class="kpi"><div class="k-label">বিক্রিত ইউনিট <span class="en">Units Sold</span></div><div class="k-value mono">${a.units}</div></div>
+    <div class="kpi"><div class="k-label">গড় অর্ডার ভ্যালু <span class="en">AOV</span></div><div class="k-value mono">${moneyShort(a.aov)}</div></div>`;
+  const maxDay = Math.max(...a.days.map(d => d.rev), 1);
+  $('#anDaily').innerHTML = a.days.map(d => barRow(d.label, d.rev, maxDay)).join('');
+  const maxSrc = Math.max(...a.bySource.map(s => s.v), 1);
+  $('#anSource').innerHTML = a.bySource.map(s => barRow(`${SOURCES[s.k].en} · ${SOURCES[s.k].bn}`, s.v, maxSrc, SOURCES[s.k].color)).join('');
+  const maxC = Math.max(...a.byCourier.map(c => c.v), 1);
+  $('#anCourier').innerHTML = a.byCourier.map(c => barRow(`${c.c.icon} ${c.c.en}`, c.v, maxC)).join('');
+  const maxCat = Math.max(...a.cats.map(c => c.v), 1);
+  $('#anCat').innerHTML = a.cats.length
+    ? a.cats.map(c => barRow(`${esc(c.k)} · ${esc(CAT_BN[c.k] || 'অন্যান্য')}`, c.v, maxCat)).join('')
+    : `<div class="chart-empty">কোনো ডেলিভারড অর্ডার নেই — সিমুলেশন শুরু করুন।<br><span class="en">No delivered orders yet.</span></div>`;
+  $('#anTop').innerHTML = a.top.length
+    ? a.top.map((t,i) => `
+      <tr>
+        <td class="num" style="font-weight:800;color:${i===0 ? 'var(--red)' : 'var(--muted)'}">${i+1}</td>
+        <td><div style="font-weight:600;font-size:13px">${esc(t.name)}</div><div style="font-size:11.5px;color:var(--muted)">${esc(t.bn)}</div></td>
+        <td class="num mono">${t.units}</td>
+        <td class="num">${money(t.rev)}</td>
+        <td class="num hide-t" style="color:var(--green)">${money(t.prof)}</td>
+      </tr>`).join('')
+    : `<tr><td colspan="5"><div class="chart-empty">কোনো ডেলিভারড অর্ডার নেই — সিমুলেশন শুরু করুন।</div></td></tr>`;
+}
+
+/* ---------- report (print view) ---------- */
+function renderReport(){
+  const a = analytics();
+  const s = invStats(parts);
+  const byBrand = {};
+  parts.forEach(p => {
+    const b = byBrand[p.brand] || (byBrand[p.brand] = {n:0, units:0, val:0, pot:0});
+    b.n++; b.units += p.stock; b.val += p.buy*p.stock; b.pot += (p.sell-p.buy)*p.stock;
+  });
+  const brandRows = Object.entries(byBrand).map(([k,v]) => `
+    <tr><td><span class="badge brand">${esc(k)} <span class="en">${esc(BRAND_BN[k]||'অন্যান্য')}</span></span></td>
+    <td class="num mono">${v.n}</td><td class="num mono">${v.units}</td>
+    <td class="num">${money(v.val)}</td><td class="num" style="color:var(--green)">${money(v.pot)}</td></tr>`).join('');
+  const lowParts = parts.filter(p => p.stock <= LOW_STOCK);
+  const lowRows = lowParts.map(p => {
+    const tv = topVendors(p.brand, 1)[0];
+    return `<tr><td><span class="sku">${p.sku}</span></td>
+      <td>${esc(p.name)}<br><span style="font-size:11px;color:var(--muted)">${esc(p.nameBn)}</span></td>
+      <td class="num mono" style="color:var(--red)">${p.stock}</td>
+      <td>${tv ? esc(tv.en) + ' · <span class="mono" style="font-size:11px">' + esc(tv.phone) + '</span>' : '—'}</td></tr>`;
+  }).join('');
+  const recent = [...orders].sort((x,y) => new Date(y.ts[0]) - new Date(x.ts[0])).slice(0,10).map(o => `
+    <tr><td><span class="sku">${o.id}</span></td>
+    <td>${esc(o.partName)}</td><td class="num mono">×${o.qty}</td>
+    <td>${SOURCES[o.source].en}</td>
+    <td>${COURIER_BY_ID[o.courier].icon} ${esc(COURIER_BY_ID[o.courier].en)}</td>
+    <td>${o.status === 'returned' ? '↩️ Returned' : STAGES[o.stage].bn}</td>
+    <td class="num">${money(orderTotal(o))}</td></tr>`).join('');
+  $('#reportRoot').innerHTML = `
+    <div class="card rep-brand">
+      <div class="rep-logo">BP</div>
+      <div>
+        <h2>BikePartsBD<span style="color:var(--red)">.</span>net — ব্যবসা রিপোর্ট</h2>
+        <p>Kayi Corporation · Jashore, Bangladesh · রিপোর্ট তৈরি: ${new Date().toLocaleString('en-GB',{dateStyle:'medium',timeStyle:'short'})} · মুদ্রা: ${esc(currency)}</p>
+      </div>
+    </div>
+    <div class="kpis">
+      <div class="kpi red"><div class="k-label">মোট রেভিনিউ <span class="en">Total Revenue</span></div><div class="k-value mono">${money(a.revenue)}</div></div>
+      <div class="kpi green"><div class="k-label">গ্রস প্রফিট <span class="en">Gross Profit</span></div><div class="k-value mono">${money(a.profit)}</div></div>
+      <div class="kpi"><div class="k-label">ডেলিভারড অর্ডার <span class="en">Delivered</span></div><div class="k-value mono">${a.delN}</div></div>
+      <div class="kpi"><div class="k-label">বিক্রিত ইউনিট <span class="en">Units Sold</span></div><div class="k-value mono">${a.units}</div></div>
+      <div class="kpi red"><div class="k-label">রিটার্ন <span class="en">Returns</span></div><div class="k-value mono">${a.retN} · ${money(a.retVal)}</div></div>
+    </div>
+    <div class="card table-wrap">
+      <h3>🛵 কুরিয়ার পারফরম্যান্স <span class="en">Courier Performance</span></h3>
+      <table><thead><tr>
+        <th>কুরিয়ার <span class="en">Courier</span></th><th class="num">অর্ডার <span class="en">Orders</span></th>
+        <th class="num">ডেলিভারড <span class="en">Delivered</span></th><th class="num">রিটার্ন <span class="en">Returns</span></th>
+        <th class="num">রেভিনিউ <span class="en">Revenue</span></th><th class="num">প্রফিট <span class="en">Profit</span></th>
+      </tr></thead>
+      <tbody>${COURIERS.map(c => {
+        const cs = courierStats(c.id);
+        return `<tr><td>${c.icon} ${esc(c.en)}<br><span style="font-size:11px;color:var(--muted)">${esc(c.bn)}</span></td>
+          <td class="num mono">${cs.n}</td><td class="num mono">${cs.delivered}</td><td class="num mono">${cs.retN}</td>
+          <td class="num">${money(cs.revenue)}</td><td class="num" style="color:var(--green)">${money(cs.profit)}</td></tr>`;
+      }).join('')}</tbody></table>
+    </div>
+    <div class="card table-wrap">
+      <h3>🏷️ ব্র্যান্ড অনুযায়ী ইনভেন্টরি <span class="en">Inventory by Brand</span></h3>
+      <table><thead><tr>
+        <th>ব্র্যান্ড <span class="en">Brand</span></th><th class="num">SKU</th><th class="num">ইউনিট <span class="en">Units</span></th>
+        <th class="num">স্টক ভ্যালু <span class="en">Stock Value</span></th><th class="num">সম্ভাব্য প্রফিট <span class="en">Potential Profit</span></th>
+      </tr></thead><tbody>${brandRows}</tbody></table>
+    </div>
+    <div class="card table-wrap">
+      <h3>🚨 লো স্টক ও টপ ভেন্ডর <span class="en">Low Stock &amp; Top Vendor</span></h3>
+      <table><thead><tr>
+        <th>SKU</th><th>পার্ট <span class="en">Part</span></th><th class="num">স্টক <span class="en">Stock</span></th><th>টপ ভেন্ডর <span class="en">Top Vendor</span></th>
+      </tr></thead>
+      <tbody>${lowRows || '<tr><td colspan="4">✅ সব পার্টস পর্যাপ্ত স্টকে আছে — All parts stocked</td></tr>'}</tbody></table>
+    </div>
+    <div class="card table-wrap">
+      <h3>🏆 টপ পার্টস <span class="en">Top Parts</span></h3>
+      <table><thead><tr>
+        <th class="num">#</th><th>পার্ট <span class="en">Part</span></th><th class="num">ইউনিট <span class="en">Units</span></th>
+        <th class="num">রেভিনিউ <span class="en">Revenue</span></th><th class="num">প্রফিট <span class="en">Profit</span></th>
+      </tr></thead>
+      <tbody>${a.top.map((t,i) => `<tr><td class="num">${i+1}</td><td>${esc(t.name)}</td><td class="num mono">${t.units}</td><td class="num">${money(t.rev)}</td><td class="num" style="color:var(--green)">${money(t.prof)}</td></tr>`).join('') || '<tr><td colspan="5">—</td></tr>'}</tbody></table>
+    </div>
+    <div class="card table-wrap">
+      <h3>🧾 সাম্প্রতিক ১০ অর্ডার <span class="en">Recent 10 Orders</span></h3>
+      <table><thead><tr>
+        <th>অর্ডার <span class="en">Order</span></th><th>পার্ট <span class="en">Part</span></th><th class="num">Qty</th>
+        <th>সোর্স <span class="en">Source</span></th><th>কুরিয়ার <span class="en">Courier</span></th><th>স্ট্যাটাস <span class="en">Status</span></th><th class="num">টোটাল <span class="en">Total</span></th>
+      </tr></thead><tbody>${recent}</tbody></table>
+    </div>
+    <div style="font-size:11.5px;color:var(--muted);text-align:center;padding:12px 0 4px">
+      © 2026 Kayi Corporation · Jashore, Bangladesh · bikepartsbd.net — Inventory OS রিপোর্ট
+    </div>`;
+}
+function switchTab(name){
+  const b = $$('.tabs button').find(x => x.dataset.tab === name);
+  if (b) b.click();
+}
+function printReportView(){
+  switchTab('report');
+  setTimeout(() => window.print(), 450);
+}
+$('#printReport').addEventListener('click', () => window.print());
+$('#printReportLink').addEventListener('click', printReportView);
 
 /* =====================================================
    VENDORS
@@ -1490,7 +1910,11 @@ function advanceRandomOrder(){
 function simTick(){
   if (Math.random() < 0.68) placeSimOrder();
   if (Math.random() < 0.62) advanceRandomOrder();
-  renderInventory(); renderCourier(); renderSide();
+  if (Math.random() < 0.05){
+    const cand = orders.filter(isDelivered);
+    if (cand.length) markReturned(rand(cand), true);
+  }
+  renderAll();
 }
 function startSim(){
   if (sim.running) return;
@@ -1539,7 +1963,11 @@ $$('.tabs button').forEach(btn => {
   btn.addEventListener('click', () => {
     $$('.tabs button').forEach(b => b.classList.toggle('active', b === btn));
     $$('.tab').forEach(t => t.classList.remove('active'));
-    $('#tab-' + btn.dataset.tab).classList.add('active');
+    const t = btn.dataset.tab;
+    $('#tab-' + t).classList.add('active');
+    if (t === 'returns') renderReturns();
+    else if (t === 'analytics') renderAnalytics();
+    else if (t === 'report') renderReport();
   });
 });
 
@@ -1601,12 +2029,14 @@ function exportInventoryCSV(){
   toast('📥 ইনভেন্টরি CSV ডাউনলোড হচ্ছে… <span class="en" style="font-size:11px;opacity:.8">Inventory CSV (prices in BDT)</span>');
 }
 function exportOrdersCSV(){
-  const rows = [['Order ID','Customer (EN)','কাস্টমার (BN)','City','Part','Qty','Source','Courier','Stage (EN)','স্ট্যাটাস (BN)','Total (BDT)','Profit (BDT)','Placed','Picked Up','In Transit','Out for Delivery','Delivered']];
+  const rows = [['Order ID','Customer (EN)','কাস্টমার (BN)','City','Part','Qty','Source','Courier','Stage (EN)','স্ট্যাটাস (BN)','Status','Total (BDT)','Profit (BDT)','Returned At','Placed','Picked Up','In Transit','Out for Delivery','Delivered']];
   orders.forEach(o => rows.push([
     o.id, o.custEn, o.custBn, o.city, o.partName, o.qty,
     SOURCES[o.source].en, COURIER_BY_ID[o.courier].en,
     STAGES[o.stage].en, STAGES[o.stage].bn,
+    o.status === 'returned' ? 'Returned' : 'Active',
     orderTotal(o), orderProfit(o),
+    o.returnedAt ? dtStr(o.returnedAt) : '',
     o.ts[0] ? dtStr(o.ts[0]) : '', o.ts[1] ? dtStr(o.ts[1]) : '',
     o.ts[2] ? dtStr(o.ts[2]) : '', o.ts[3] ? dtStr(o.ts[3]) : '',
     o.ts[4] ? dtStr(o.ts[4]) : ''
@@ -1636,6 +2066,9 @@ $('#currencySel').addEventListener('change', e => {
 const cachedRates = store.get('bpbd_rates', null);
 if (cachedRates && cachedRates.t && Date.now() - cachedRates.t < 6*3600e3 && cachedRates.r){
   Object.keys(cachedRates.r).forEach(k => { if (CURRENCIES[k]) CURRENCIES[k].rate = cachedRates.r[k]; });
+  updateRateInfo(cachedRates.src || 'ক্যাশ');
+} else {
+  updateRateInfo('ডিফল্ট');
 }
 fetchRates();
 

@@ -24,12 +24,25 @@ single-file application.
 - **🌗 Dark + Light Mode** — toggle in the top bar, preference saved to `localStorage`.
   Brand red `#e10600` consistent in both.
 - **💱 Currency Switcher** — ৳ BDT · $ USD · € EUR · £ GBP · ₹ INR. Live exchange rates
-  fetched from open.er-api.com (cached 6h, offline fallback). Base data stays in BDT;
-  inline editing works in the displayed currency.
+  fetched from api.frankfurter.app (ECB data, no key) with automatic fallback to
+  open.er-api.com and a 6h cache + offline defaults. Base data stays in BDT; inline
+  editing works in the displayed currency. Rate source & update time shown in the footer.
+- **↩️ Returns Module** — return any delivered order (one click in the Courier tab):
+  stock is auto-restored, the order leaves courier revenue, and it appears in the
+  Returns tab with value, source, timestamps and a one-click undo. The live simulation
+  also generates occasional returns.
+- **📊 Analytics Module** — live charts computed from delivered orders: sales over the
+  last 7 days, revenue by source, revenue by courier, category share (pure-CSS bars,
+  no chart library), plus KPIs (revenue, profit, AOV) and a top-parts table.
+- **🖨️ Print View / Business Report** — a dedicated Report tab with the full business
+  report (courier performance, inventory by brand, low stock + top vendor, top parts,
+  recent orders). One click prints/saves as PDF with a clean print-only layout (dark
+  mode safe, UI chrome hidden).
 - **📊 Live Simulation** — "Start Live Simulation" streams sales in from Messenger,
-  WhatsApp & Website in real time, with stock auto-deduction and courier auto-advance.
+  WhatsApp & Website in real time, with stock auto-deduction, courier auto-advance and
+  occasional auto-returns.
 - **📥 CSV Export** — one-click export of the inventory table and the order book
-  (bilingual headers, Excel-safe UTF-8 BOM, prices in BDT).
+  (bilingual headers, Excel-safe UTF-8 BOM, prices in BDT, return status included).
 
 ## 📱 Responsive
 
