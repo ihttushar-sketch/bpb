@@ -63,3 +63,12 @@ Open `index.html` directly, or serve the folder:
 ```bash
 python3 -m http.server 8000
 ```
+
+## Deploy
+
+- **GitHub Pages**: repo Settings → Pages → *Build and deployment* → Source:
+  **Deploy from a branch** → branch `main`, folder `/ (root)` → Save. The app
+  will be live at `https://<username>.github.io/bpb/`.
+- **Any static host** (Netlify, Vercel, Cloudflare Pages, cPanel): upload
+  `index.html` as-is — no build step or dependencies required.
+
