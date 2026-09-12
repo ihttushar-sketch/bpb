@@ -1,0 +1,2103 @@
+<!DOCTYPE html>
+<html lang="bn" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#e10600">
+<meta name="description" content="BikePartsBD.net — Kayi Corporation Inventory OS: live inventory, courier tracking, vendor contacts, returns, analytics & printable reports. Jashore, Bangladesh.">
+<title>BikePartsBD.net — Inventory OS | Kayi Corporation, Jashore</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%23e10600'/><text x='32' y='44' font-family='Arial Black,sans-serif' font-size='30' font-weight='900' fill='white' text-anchor='middle'>BP</text></svg>">
+<style>
+/* ============ Design tokens ============ */
+:root{
+  --red:#e10600; --red-dark:#b30500; --red-soft:rgba(225,6,0,.08); --red-softer:rgba(225,6,0,.045);
+  --green:#0f9d58; --green-soft:rgba(15,157,88,.12);
+  --messenger:#0084ff; --wa:#25d366; --web:#e10600;
+  --bg:#f2f3f6; --card:#ffffff; --card2:#f8f9fb;
+  --text:#15181e; --muted:#606878; --faint:#8b93a3;
+  --border:#e3e6ec; --border2:#d4d9e2;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,'Noto Sans Bengali',sans-serif;
+  --shadow:0 1px 2px rgba(16,24,40,.05),0 4px 16px rgba(16,24,40,.06);
+  --shadow-lg:0 12px 40px rgba(16,24,40,.22);
+  --radius:14px;
+}
+[data-theme="dark"]{
+  --bg:#0c0e13; --card:#151922; --card2:#191e29;
+  --text:#edf0f6; --muted:#9aa3b2; --faint:#6f7888;
+  --border:#262d3a; --border2:#333c4c;
+  --red-soft:rgba(225,6,0,.16); --red-softer:rgba(225,6,0,.09);
+  --green-soft:rgba(15,157,88,.18);
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 4px 16px rgba(0,0,0,.35);
+  --shadow-lg:0 12px 40px rgba(0,0,0,.6);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--sans); background:var(--bg); color:var(--text);
+  font-size:15px; line-height:1.5; -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+}
+button{font-family:inherit;cursor:pointer}
+input,select{font-family:inherit}
+.mono{font-family:var(--mono)}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ============ Layout ============ */
+.app{max-width:1440px;margin:0 auto;padding:0 20px 30px}
+
+/* Topbar */
+.topbar{
+  position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:14px;
+  padding:12px 0;margin:0 -20px 18px;padding-left:20px;padding-right:20px;
+  background:color-mix(in srgb,var(--bg) 86%,transparent);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--border);
+}
+.logo{
+  width:44px;height:44px;border-radius:12px;background:var(--red);flex:0 0 auto;
+  display:grid;place-items:center;color:#fff;font-weight:800;font-size:15px;
+  letter-spacing:-.5px;box-shadow:0 4px 12px rgba(225,6,0,.35);
+}
+.titles h1{font-size:17px;font-weight:800;letter-spacing:-.3px;line-height:1.2}
+.titles h1 .dot{color:var(--red)}
+.titles p{font-size:12px;color:var(--muted);line-height:1.35}
+.titles p .en{color:var(--faint)}
+.top-actions{margin-left:auto;display:flex;gap:8px;align-items:center}
+
+.btn{
+  border:1px solid var(--border);background:var(--card);color:var(--text);
+  border-radius:11px;padding:9px 14px;font-weight:600;font-size:13.5px;
+  display:inline-flex;align-items:center;gap:7px;transition:.15s;
+}
+.btn:hover{border-color:var(--border2);transform:translateY(-1px)}
+.btn-red{
+  border:none;background:var(--red);color:#fff;border-radius:11px;
+  padding:10px 16px;font-weight:700;font-size:14px;
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  box-shadow:0 4px 14px rgba(225,6,0,.35);transition:.15s;
+}
+.btn-red:hover{background:var(--red-dark);transform:translateY(-1px);box-shadow:0 6px 18px rgba(225,6,0,.45)}
+.btn-red.big{width:100%;padding:13px 16px;font-size:15px}
+.btn-red.running{background:#0d0f13;box-shadow:0 4px 14px rgba(0,0,0,.35);animation:pulseBtn 1.6s infinite}
+@keyframes pulseBtn{0%,100%{box-shadow:0 0 0 0 rgba(225,6,0,.5)}50%{box-shadow:0 0 0 9px rgba(225,6,0,0)}}
+.btn-ghost{
+  border:1px solid var(--border);background:transparent;color:var(--muted);
+  border-radius:11px;padding:8px 12px;font-weight:600;font-size:13px;transition:.15s;
+}
+.btn-ghost:hover{color:var(--text);border-color:var(--border2)}
+.btn .en{font-size:10.5px;font-weight:600;opacity:.75}
+
+/* Main layout: content + 360px side panel */
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:20px;align-items:start}
+
+/* Tabs */
+.tabs{display:flex;gap:6px;margin-bottom:18px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{
+  border:1px solid var(--border);background:var(--card);color:var(--muted);
+  border-radius:12px;padding:10px 18px;font-size:14.5px;font-weight:700;
+  display:flex;align-items:center;gap:9px;white-space:nowrap;transition:.15s;
+}
+.tabs button small{display:block;font-size:10px;font-weight:600;color:var(--faint);line-height:1.1}
+.tabs button .tb{display:flex;flex-direction:column;align-items:flex-start;line-height:1.25}
+.tabs button:hover{border-color:var(--border2);color:var(--text)}
+.tabs button.active{
+  background:var(--red);border-color:var(--red);color:#fff;
+  box-shadow:0 4px 14px rgba(225,6,0,.3);
+}
+.tabs button.active small{color:rgba(255,255,255,.75)}
+
+.tab{display:none;animation:fadeUp .25s ease}
+.tab.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* Section head */
+.sec-head{margin:4px 0 16px}
+.sec-head h2{font-size:21px;font-weight:800;letter-spacing:-.3px}
+.sec-head h2 .en{font-size:12px;font-weight:600;color:var(--faint);margin-left:6px}
+.sec-head .sub{font-size:13px;color:var(--muted);margin-top:3px}
+
+.card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:16px;margin-bottom:16px;
+}
+.card h3{font-size:14.5px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.card h3 .en{font-size:11px;font-weight:600;color:var(--faint)}
+
+/* ============ Add Part form ============ */
+.add-form{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:12px;align-items:end}
+.field label{
+  display:block;font-size:12.5px;font-weight:700;margin-bottom:5px;
+}
+.field label .en{font-weight:600;color:var(--faint);font-size:10.5px}
+.field input{
+  width:100%;border:1.5px solid var(--border);background:var(--card2);color:var(--text);
+  border-radius:10px;padding:10px 12px;font-size:14px;outline:none;transition:.15s;
+}
+.field input:focus{border-color:var(--red);background:var(--card)}
+.field input::placeholder{color:var(--faint)}
+.field .hint{font-size:10.5px;color:var(--faint);margin-top:3px}
+
+/* Toolbar */
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:12px 16px}
+.toolbar input[type=text]{
+  flex:1;min-width:180px;border:1.5px solid var(--border);background:var(--card2);color:var(--text);
+  border-radius:10px;padding:9px 12px;font-size:13.5px;outline:none;
+}
+.toolbar input[type=text]:focus{border-color:var(--red)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{
+  border:1.5px solid var(--border);background:var(--card);color:var(--muted);
+  border-radius:99px;padding:6px 12px;font-size:12.5px;font-weight:700;transition:.15s;
+}
+.chip:hover{border-color:var(--border2);color:var(--text)}
+.chip.on{background:var(--red);border-color:var(--red);color:#fff}
+.chip small{font-weight:600;color:var(--faint)}
+.chip.on small{color:rgba(255,255,255,.7)}
+.chip-toggle{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;user-select:none}
+.chip-toggle input{accent-color:var(--red);width:15px;height:15px}
+
+/* KPIs */
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;box-shadow:var(--shadow)}
+.kpi .k-label{font-size:11.5px;font-weight:700;color:var(--muted)}
+.kpi .k-label .en{display:block;font-weight:600;color:var(--faint);font-size:10px}
+.kpi .k-value{font-size:19px;font-weight:800;margin-top:4px;letter-spacing:-.3px}
+.kpi .k-value.mono{font-family:var(--mono);font-size:16.5px;letter-spacing:-.5px}
+.kpi.red .k-value{color:var(--red)}
+.kpi.green .k-value{color:var(--green)}
+
+/* Tables */
+.table-wrap{overflow-x:auto;padding:0}
+.table-wrap h3{padding:16px 16px 0}
+table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:640px}
+thead th{
+  text-align:left;padding:11px 12px;font-size:11px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.4px;color:var(--muted);border-bottom:1px solid var(--border);
+  background:var(--card2);white-space:nowrap;
+}
+thead th .en{display:block;font-weight:600;color:var(--faint);text-transform:none;letter-spacing:0;font-size:9.5px}
+tbody td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--red-softer)}
+tr.low td:first-child{box-shadow:inset 3px 0 0 var(--red)}
+td.num{text-align:right;font-family:var(--mono);font-weight:600;font-size:13px;white-space:nowrap}
+th.num{text-align:right}
+td.mut{color:var(--muted)}
+.part-cell{min-width:200px}
+.part-cell .p-en{font-weight:600;font-size:13.5px}
+.part-cell .p-bn{font-size:12px;color:var(--muted)}
+.sku{font-family:var(--mono);font-size:11.5px;color:var(--faint);background:var(--card2);border:1px solid var(--border);border-radius:6px;padding:2px 7px;white-space:nowrap}
+.badge{
+  display:inline-block;border-radius:99px;padding:3px 10px;font-size:11.5px;font-weight:700;
+  background:var(--card2);border:1px solid var(--border);white-space:nowrap;
+}
+.badge.brand{background:var(--red-soft);border-color:transparent;color:var(--red)}
+.badge.stock-low{background:var(--red);color:#fff}
+.badge.stock-ok{background:var(--green-soft);color:var(--green);border-color:transparent}
+.badge .en{font-weight:600;opacity:.75;font-size:10px}
+
+/* Editable cells */
+.cell-edit{
+  border:1px dashed transparent;background:transparent;color:inherit;
+  font-family:var(--mono);font-weight:600;font-size:13px;border-radius:7px;
+  padding:3px 6px;transition:.12s;position:relative;white-space:nowrap;
+}
+.cell-edit:hover{border-color:var(--red);background:var(--red-softer)}
+.cell-edit:focus-visible{outline:2px solid var(--red)}
+.cell-input{
+  width:86px;border:1.5px solid var(--red);background:var(--card);color:var(--text);
+  border-radius:8px;padding:4px 8px;font-family:var(--mono);font-size:13px;font-weight:600;
+  text-align:right;outline:none;
+}
+.pos{position:relative}
+@keyframes flashRed{0%{background:rgba(225,6,0,.32);color:var(--red)}100%{background:transparent}}
+.flash{animation:flashRed .65s ease-out}
+@keyframes pillFloat{
+  0%{opacity:0;transform:translateY(5px) scale(.7)}
+  15%{opacity:1;transform:translateY(0) scale(1)}
+  70%{opacity:1;transform:none}
+  100%{opacity:0;transform:translateY(-16px)}
+}
+.delta-pill{
+  position:absolute;right:-4px;top:-15px;z-index:6;pointer-events:none;
+  font-family:var(--mono);font-size:10.5px;font-weight:700;color:#fff;
+  background:var(--red);border-radius:99px;padding:2px 8px;
+  box-shadow:0 3px 10px rgba(0,0,0,.3);animation:pillFloat 1.35s ease forwards;white-space:nowrap;
+}
+.delta-pill.down{background:var(--green)}
+.delta-pill.buy{background:var(--messenger)}
+
+.icon-btn{
+  border:none;background:transparent;color:var(--faint);border-radius:8px;
+  width:30px;height:30px;display:grid;place-items:center;font-size:15px;transition:.12s;
+}
+.icon-btn:hover{background:var(--red-soft);color:var(--red)}
+.empty{padding:34px 16px;text-align:center;color:var(--faint);font-size:13.5px}
+
+/* ============ Courier ============ */
+.courier-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:16px}
+.c-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;position:relative;overflow:hidden}
+.c-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--red),#ff6a5e)}
+.c-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.c-ico{width:38px;height:38px;border-radius:10px;background:var(--red-soft);display:grid;place-items:center;font-size:19px}
+.c-head .c-name{font-weight:800;font-size:14.5px}
+.c-head .c-name .bn{display:block;font-size:12px;color:var(--muted);font-weight:600}
+.c-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.c-stat{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:8px 10px}
+.c-stat .s-label{font-size:10.5px;font-weight:700;color:var(--muted)}
+.c-stat .s-label .en{display:block;font-weight:600;color:var(--faint);font-size:9.5px}
+.c-stat .s-value{font-family:var(--mono);font-weight:700;font-size:14px;margin-top:2px}
+.c-stat.rev .s-value{color:var(--red)}
+.c-stat.prof .s-value{color:var(--green)}
+.c-badges{margin-top:10px;display:flex;gap:6px;flex-wrap:wrap}
+
+/* Source pills */
+.src{display:inline-flex;align-items:center;gap:5px;border-radius:99px;padding:3px 10px;font-size:11px;font-weight:700;color:#fff;white-space:nowrap}
+.src .en{font-weight:600;opacity:.85;font-size:10px}
+.src-messenger{background:var(--messenger)}
+.src-whatsapp{background:var(--wa)}
+.src-website{background:var(--web)}
+
+/* Timeline */
+.tl{min-width:230px;max-width:330px}
+.tl-line{position:relative;height:2px;background:var(--border);border-radius:99px;margin:0 10px 8px}
+.tl-fill{position:absolute;left:0;top:0;height:100%;background:var(--red);border-radius:99px;transition:width .5s ease}
+.tl-steps{display:flex;justify-content:space-between;position:relative}
+.tl-step{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;min-width:0}
+.tl-dot{
+  width:19px;height:19px;border-radius:50%;background:var(--card);border:2px solid var(--border2);
+  display:grid;place-items:center;font-size:9px;color:var(--faint);font-weight:800;position:relative;transition:.2s;
+}
+.tl-step.done .tl-dot{background:var(--red);border-color:var(--red);color:#fff}
+.tl-step.cur .tl-dot{background:var(--card);border-color:var(--red);color:var(--red)}
+.tl-step.cur .tl-dot::after{
+  content:'';position:absolute;inset:-5px;border-radius:50%;
+  border:2px solid var(--red);opacity:.5;animation:ringPulse 1.4s infinite;
+}
+@keyframes ringPulse{0%{transform:scale(.8);opacity:.6}100%{transform:scale(1.35);opacity:0}}
+.tl-lbl{font-size:9px;font-weight:600;color:var(--faint);text-align:center;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.tl-step.done .tl-lbl,.tl-step.cur .tl-lbl{color:var(--muted)}
+.tl-cur{margin-top:6px;display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;color:var(--red)}
+.tl-cur .t-time{font-family:var(--mono);font-size:10px;color:var(--faint);font-weight:600}
+
+.adv-btn{
+  border:1.5px solid var(--border);background:var(--card);color:var(--muted);
+  border-radius:9px;padding:6px 10px;font-size:12px;font-weight:700;transition:.15s;white-space:nowrap;
+}
+.adv-btn:hover{border-color:var(--red);color:var(--red);background:var(--red-softer)}
+.adv-btn:disabled{opacity:.4;cursor:default;border-color:var(--border);color:var(--faint);background:transparent}
+
+/* ============ Vendors ============ */
+.vendor-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.v-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
+.v-top{display:flex;align-items:center;gap:11px;margin-bottom:10px}
+.v-ava{
+  width:42px;height:42px;border-radius:12px;background:var(--red-soft);color:var(--red);
+  display:grid;place-items:center;font-weight:800;font-size:15px;flex:0 0 auto;
+}
+.v-name{font-weight:800;font-size:14.5px}
+.v-name .bn{display:block;font-size:12px;color:var(--muted);font-weight:600}
+.v-area{font-size:12px;color:var(--muted);margin-bottom:10px}
+.v-area .bn{color:var(--faint)}
+.v-brands{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px}
+.v-actions{display:flex;gap:8px}
+.v-btn{
+  flex:1;border-radius:10px;padding:9px 10px;font-size:13px;font-weight:700;
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;transition:.15s;text-decoration:none;
+}
+.v-btn .en{font-weight:600;opacity:.8;font-size:10.5px}
+.v-btn-call{border:1.5px solid var(--border);background:var(--card);color:var(--text)}
+.v-btn-call:hover{border-color:var(--red);color:var(--red)}
+.v-btn-wa{background:var(--wa);border:1.5px solid var(--wa);color:#fff;box-shadow:0 3px 10px rgba(37,211,102,.3)}
+.v-btn-wa:hover{filter:brightness(.96);transform:translateY(-1px)}
+.v-phone{font-family:var(--mono);font-size:11.5px;color:var(--faint);margin-bottom:10px}
+
+/* ============ Side panel ============ */
+.side{position:sticky;top:82px;display:flex;flex-direction:column;gap:0}
+.side-kpis{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.side-kpi{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:9px 11px}
+.side-kpi .s-label{font-size:10.5px;font-weight:700;color:var(--muted)}
+.side-kpi .s-label .en{display:block;font-weight:600;color:var(--faint);font-size:9.5px}
+.side-kpi .s-value{font-weight:800;font-size:15.5px;margin-top:2px}
+.side-kpi .s-value.mono{font-family:var(--mono);font-size:13.5px}
+.side-kpi.red .s-value{color:var(--red)}
+.side-courier-row{display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px dashed var(--border)}
+.side-courier-row:last-child{border-bottom:none}
+.sc-ico{font-size:16px}
+.sc-info{flex:1;min-width:0}
+.sc-name{font-weight:700;font-size:12.5px}
+.sc-name .bn{color:var(--muted);font-weight:600;font-size:11px;display:block}
+.sc-nums{font-family:var(--mono);font-size:11px;font-weight:600;white-space:nowrap}
+.sc-nums .r{color:var(--red)}.sc-nums .p{color:var(--green)}
+
+.sim-sources{font-size:11.5px;color:var(--faint);margin:2px 0 12px}
+.feed{
+  max-height:280px;overflow-y:auto;background:var(--card2);border:1px solid var(--border);
+  border-radius:11px;padding:10px;display:flex;flex-direction:column;gap:8px;margin-top:12px;
+}
+.feed-empty{font-size:12px;color:var(--faint);text-align:center;padding:14px 0}
+.feed-item{display:flex;gap:9px;font-size:12px;line-height:1.4;animation:fadeUp .3s ease}
+.feed-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex:0 0 auto;background:var(--faint)}
+.feed-item p{color:var(--text)}
+.feed-item p b{font-weight:700}
+.feed-item time{font-family:var(--mono);font-size:9.5px;color:var(--faint)}
+.feed-item .tag{font-weight:800;font-size:10px;border-radius:5px;padding:1px 6px;color:#fff;margin-right:4px}
+
+/* Restock button block */
+.restock-wrap{margin-top:0}
+.restock-note{font-size:11.5px;color:var(--faint);text-align:center;margin-top:8px;line-height:1.5}
+
+/* ============ Modal ============ */
+.modal-backdrop{
+  position:fixed;inset:0;background:rgba(8,10,15,.55);backdrop-filter:blur(4px);
+  display:grid;place-items:center;z-index:100;padding:20px;animation:fadeIn .2s ease;
+}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal-backdrop[hidden]{display:none}
+.modal{
+  background:var(--card);border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow-lg);
+  width:100%;max-width:720px;max-height:86vh;display:flex;flex-direction:column;overflow:hidden;
+  animation:fadeUp .25s ease;
+}
+.modal-head{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:16px 20px;border-bottom:1px solid var(--border);background:var(--card2);
+}
+.modal-head h2{font-size:16.5px;font-weight:800}
+.modal-head h2 .en{display:block;font-size:11px;font-weight:600;color:var(--faint)}
+.modal-head .close{
+  border:none;background:var(--card);border:1px solid var(--border);color:var(--muted);
+  width:34px;height:34px;border-radius:10px;font-size:15px;transition:.15s;flex:0 0 auto;
+}
+.modal-head .close:hover{color:var(--red);border-color:var(--red)}
+.modal-body{padding:18px 20px;overflow-y:auto}
+.restock-part{
+  border:1px solid var(--border);border-radius:13px;padding:14px;margin-bottom:12px;background:var(--card2);
+}
+.restock-part:last-child{margin-bottom:0}
+.rp-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:9px}
+.rp-name{font-weight:800;font-size:14px}
+.rp-name .bn{display:block;font-size:12px;color:var(--muted);font-weight:600}
+.rp-qty{margin-left:auto;font-size:12px;color:var(--muted);text-align:right;line-height:1.35}
+.rp-vendor{
+  display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;
+  background:var(--card);border:1px solid var(--border);margin-bottom:7px;flex-wrap:wrap;
+}
+.rp-vendor:last-child{margin-bottom:0}
+.rv-info{flex:1;min-width:140px}
+.rv-name{font-weight:700;font-size:13px}
+.rv-name .bn{color:var(--muted);font-weight:600;font-size:11.5px;display:block}
+.rv-meta{font-size:11px;color:var(--faint)}
+.rv-actions{display:flex;gap:6px}
+.rv-btn{
+  border-radius:9px;padding:7px 11px;font-size:12px;font-weight:700;text-decoration:none;
+  display:inline-flex;align-items:center;gap:6px;transition:.15s;
+}
+.rv-btn.call{border:1.5px solid var(--border);color:var(--text)}
+.rv-btn.call:hover{border-color:var(--red);color:var(--red)}
+.rv-btn.wa{background:var(--wa);color:#fff}
+.rv-btn.wa:hover{filter:brightness(.96)}
+.rv-btn .en{font-weight:600;opacity:.8;font-size:10px}
+.best-tag{font-size:9.5px;font-weight:800;background:var(--red);color:#fff;border-radius:5px;padding:2px 6px}
+
+/* ============ Toasts ============ */
+#toasts{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:200;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}
+.toast{
+  background:var(--text);color:var(--bg);border-radius:12px;padding:10px 16px;font-size:13px;
+  font-weight:600;box-shadow:var(--shadow-lg);animation:toastIn .25s ease;max-width:92vw;
+}
+[data-theme="dark"] .toast{background:#f2f3f6;color:#15181e}
+.toast.red{background:var(--red);color:#fff}
+.toast.green{background:var(--green);color:#fff}
+.toast.out{animation:toastOut .3s ease forwards}
+@keyframes toastIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes toastOut{to{opacity:0;transform:translateY(8px)}}
+
+/* Footer */
+footer{
+  margin-top:26px;padding-top:18px;border-top:1px solid var(--border);
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:space-between;
+  font-size:12px;color:var(--faint);
+}
+footer .f-brand{display:flex;align-items:center;gap:9px;font-weight:600;color:var(--muted)}
+footer .f-logo{
+  width:26px;height:26px;border-radius:8px;background:var(--red);color:#fff;font-weight:800;
+  font-size:9.5px;display:grid;place-items:center;flex:0 0 auto;
+}
+footer a{color:var(--muted);text-decoration:none;font-weight:600}
+footer a:hover{color:var(--red)}
+footer .reset-btn{background:none;border:none;color:var(--faint);font-size:12px;font-weight:600}
+footer .reset-btn:hover{color:var(--red)}
+
+/* Mobile bottom action bar */
+.mobile-actions{
+  position:fixed;left:0;right:0;bottom:0;z-index:60;display:none;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+  background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(12px);border-top:1px solid var(--border);
+}
+.mobile-actions .btn-red,.mobile-actions .btn{flex:1;justify-content:center}
+
+select.btn{
+  appearance:auto;-webkit-appearance:auto;padding:8px 10px;
+  font-weight:700;font-size:13px;background:var(--card);color:var(--text);
+}
+.v-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.brand-checks{display:flex;flex-wrap:wrap;gap:8px}
+.brand-check{
+  display:inline-flex;align-items:center;gap:7px;border:1.5px solid var(--border);
+  border-radius:99px;padding:6px 12px;font-size:12.5px;font-weight:700;cursor:pointer;user-select:none;
+}
+.brand-check:hover{border-color:var(--red)}
+.brand-check input{accent-color:var(--red);width:14px;height:14px}
+.brand-check .en{font-weight:600;color:var(--faint);font-size:10.5px}
+.v-form-actions{display:flex;gap:10px;flex-wrap:wrap}
+.v-edit{margin-left:auto}
+
+/* ============ Analytics ============ */
+.an-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.bar-row{display:grid;grid-template-columns:88px 1fr 78px;gap:9px;align-items:center;margin-bottom:8px;font-size:12px}
+.bar-lbl{font-weight:600;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-track{height:12px;background:var(--card2);border:1px solid var(--border);border-radius:99px;overflow:hidden}
+.bar-fill{height:100%;background:var(--red);border-radius:99px;transition:width .35s ease;min-width:3px}
+.bar-val{font-family:var(--mono);font-size:10.5px;font-weight:700;text-align:right;white-space:nowrap}
+.chart-empty{padding:18px 6px;text-align:center;color:var(--faint);font-size:12.5px}
+@media (max-width:900px){.an-grid{grid-template-columns:1fr}}
+
+/* ============ Report ============ */
+.rep-brand{display:flex;gap:14px;align-items:center}
+.rep-logo{
+  width:52px;height:52px;border-radius:14px;background:var(--red);color:#fff;
+  display:grid;place-items:center;font-weight:800;font-size:17px;flex:0 0 auto;
+  box-shadow:0 4px 12px rgba(225,6,0,.35);
+}
+.rep-brand h2{font-size:20px;font-weight:800;letter-spacing:-.3px}
+.rep-brand p{font-size:12.5px;color:var(--muted);margin-top:3px}
+
+/* ============ Responsive ============ */
+/* Tablet 600-1100 */
+@media (max-width:1100px){
+  .layout{grid-template-columns:1fr}
+  .side{position:static;display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:8px}
+  .side .card{margin-bottom:0}
+  .side-kpis{grid-column:1/-1}
+  .restock-wrap{grid-column:1/-1}
+  .kpis{grid-template-columns:repeat(3,1fr)}
+  .vendor-grid{grid-template-columns:1fr 1fr}
+  .hide-t{display:none}
+}
+/* Phone <600 */
+@media (max-width:600px){
+  body{font-size:14px}
+  .app{padding:0 12px 24px}
+  .topbar{margin:0 -12px 14px;padding-left:12px;padding-right:12px}
+  .titles p{display:none}
+  .add-form{grid-template-columns:1fr 1fr}
+  .add-form .field:first-child{grid-column:1/-1}
+  .add-form .btn-red{grid-column:1/-1}
+  .courier-grid{grid-template-columns:1fr}
+  .vendor-grid{grid-template-columns:1fr}
+  .v-form-grid{grid-template-columns:1fr}
+  .kpis{grid-template-columns:1fr 1fr}
+  .side{grid-template-columns:1fr}
+  .tl-lbl{display:none}
+  .tl{max-width:200px}
+  .hide-m{display:none}
+  .top-actions .btn-sim-label,.top-actions .btn-theme-label{display:none}
+  .mobile-actions{display:flex}
+  body.has-mobile-actions{padding-bottom:76px}
+  .tabs button{padding:9px 14px}
+}
+
+/* ============ Print view ============ */
+@media print{
+  :root{
+    --bg:#fff;--card:#fff;--card2:#f5f6f8;--text:#101318;--muted:#444c59;--faint:#6a7282;
+    --border:#d5d9e0;--border2:#c3c8d2;--red:#e10600;--red-soft:rgba(225,6,0,.08);
+    --green:#0f9d58;--green-soft:rgba(15,157,88,.12);
+  }
+  body{background:#fff !important}
+  .topbar,.tabs,.side,.mobile-actions,footer,.no-print,#toasts{display:none !important}
+  .tab{display:none !important}
+  #tab-report{display:block !important}
+  .app{max-width:100%;padding:0;margin:0}
+  .layout{display:block}
+  .card{box-shadow:none;break-inside:avoid}
+  .table-wrap{overflow:visible}
+  table{min-width:0}
+  thead th{background:#f0f1f4;color:#111}
+  .kpi{box-shadow:none}
+  @page{margin:14mm}
+}
+</style>
+</head>
+<body class="has-mobile-actions">
+<div class="app">
+
+  <!-- ================= TOPBAR ================= -->
+  <header class="topbar">
+    <div class="logo" title="BikePartsBD">BP</div>
+    <div class="titles">
+      <h1>BikePartsBD<span class="dot">.</span>net</h1>
+      <p>📦 ইনভেন্টরি ওএস · কায়ি কর্পোরেশন · যশোর
+        <span class="en">Inventory OS · Kayi Corporation · Jashore</span></p>
+    </div>
+    <div class="top-actions">
+      <button id="simToggleTop" class="btn-red" aria-label="Live simulation">
+        <span id="simToggleTopIcon">▶</span>
+        <span id="simToggleTopLabel" class="btn-sim-label">লাইভ সিমুলেশন শুরু করুন</span>
+      </button>
+      <button id="themeToggle" class="btn" aria-label="Toggle dark mode">
+        <span id="themeIcon">🌙</span>
+        <span id="themeLabel" class="btn-theme-label">ডার্ক মোড</span>
+      </button>
+      <select id="currencySel" class="btn" title="মুদ্রা — Currency" aria-label="Currency">
+        <option value="BDT">৳ BDT</option>
+        <option value="USD">$ USD</option>
+        <option value="EUR">€ EUR</option>
+        <option value="GBP">£ GBP</option>
+        <option value="INR">₹ INR</option>
+      </select>
+    </div>
+  </header>
+
+  <div class="layout">
+    <!-- ================= MAIN ================= -->
+    <main>
+      <nav class="tabs" role="tablist">
+        <button data-tab="inventory" class="active" role="tab">
+          <span class="t-ico">📦</span>
+          <span class="tb"><span>ইনভেন্টরি</span><small>Inventory</small></span>
+        </button>
+        <button data-tab="courier" role="tab">
+          <span class="t-ico">🛵</span>
+          <span class="tb"><span>কুরিয়ার</span><small>Courier</small></span>
+        </button>
+        <button data-tab="vendors" role="tab">
+          <span class="t-ico">📞</span>
+          <span class="tb"><span>ভেন্ডর</span><small>Vendors</small></span>
+        </button>
+        <button data-tab="returns" role="tab">
+          <span class="t-ico">↩️</span>
+          <span class="tb"><span>রিটার্ন</span><small>Returns</small></span>
+        </button>
+        <button data-tab="analytics" role="tab">
+          <span class="t-ico">📊</span>
+          <span class="tb"><span>অ্যানালিটিক্স</span><small>Analytics</small></span>
+        </button>
+        <button data-tab="report" role="tab">
+          <span class="t-ico">🖨️</span>
+          <span class="tb"><span>রিপোর্ট</span><small>Report</small></span>
+        </button>
+      </nav>
+
+      <!-- ============ INVENTORY ============ -->
+      <section id="tab-inventory" class="tab active">
+        <div class="sec-head">
+          <h2>📦 ইনভেন্টরি <span class="en">Inventory — auto SKU · Bangla · brand &amp; category detection</span></h2>
+          <p class="sub">ক্রয়-বিক্রয় মূল্যে ক্লিক করে সরাসরি এডিট করুন — লাল ফ্ল্যাশ + ডেল্টা পিল দেখাবে। <span class="en">Click any price/stock to edit inline.</span></p>
+        </div>
+
+        <form id="addPartForm" class="add-form card" autocomplete="off">
+          <div class="field">
+            <label>🏷️ পার্টের নাম <span class="en">Product Name</span></label>
+            <input id="addName" type="text" placeholder="e.g. Yamaha FZS V2 Rear Brake Shoe">
+            <div class="hint">মূল্য ৳ (BDT)-তে দিন — SKU, বাংলা, ব্র্যান্ড, ক্যাটাগরি, প্রফিট ও মার্জিন অটো হবে</div>
+          </div>
+          <div class="field">
+            <label>💰 ক্রয় মূল্য (৳) <span class="en">Buying Price</span></label>
+            <input id="addBuy" type="number" min="1" step="1" placeholder="320">
+          </div>
+          <div class="field">
+            <label>💵 বিক্রয় মূল্য (৳) <span class="en">Selling Price</span></label>
+            <input id="addSell" type="number" min="1" step="1" placeholder="450">
+          </div>
+          <button type="submit" class="btn-red">
+            ➕ পার্ট যোগ করুন <span class="en">Add Part</span>
+          </button>
+        </form>
+
+        <div class="toolbar card">
+          <input type="text" id="searchParts" placeholder="🔍 খুঁজুন — Search parts, SKU, brand…">
+          <div class="chips" id="brandChips"></div>
+          <label class="chip-toggle"><input type="checkbox" id="lowOnly"> 🚨 লো স্টক <span class="en">Low stock</span></label>
+          <button class="btn" id="exportInvCsv" title="CSV ডাউনলোড — Download CSV (মূল্য BDT-তে)">⬇ CSV <span class="en">Export</span></button>
+        </div>
+
+        <div class="kpis" id="invKpis"></div>
+
+        <div class="card table-wrap">
+          <h3>📦 স্টক তালিকা <span class="en">Stock List</span></h3>
+          <table>
+            <thead>
+              <tr>
+                <th>SKU</th>
+                <th>পার্ট <span class="en">Part</span></th>
+                <th class="hide-m">ব্র্যান্ড <span class="en">Brand</span></th>
+                <th class="hide-t">ক্যাটাগরি <span class="en">Category</span></th>
+                <th class="num">ক্রয় ৳ <span class="en">Buy</span></th>
+                <th class="num">বিক্রয় ৳ <span class="en">Sell</span></th>
+                <th class="num">স্টক <span class="en">Stock</span></th>
+                <th class="num">প্রফিট ৳ <span class="en">Profit</span></th>
+                <th class="num hide-t">মার্জিন <span class="en">Margin</span></th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="invBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============ COURIER ============ -->
+      <section id="tab-courier" class="tab">
+        <div class="sec-head">
+          <h2>🛵 কুরিয়ার ট্র্যাকিং <span class="en">Courier Tracking — 5-stage timeline</span></h2>
+          <p class="sub">Sundarban · SA Paribahan · Karotoa · Janani · eCourier · Pathao — প্রতি কুরিয়ারের গ্রস রেভিনিউ ও গ্রস প্রফিট। <span class="en">Per-courier gross revenue &amp; gross profit.</span></p>
+          <button class="btn" id="exportOrdersCsv" style="margin-top:10px">⬇ অর্ডার CSV <span class="en">Export Orders</span></button>
+        </div>
+        <div class="toolbar card">
+          <input type="text" id="searchOrders" placeholder="🔍 অর্ডার খুঁজুন — Search by order ID, customer, part, city…">
+          <span style="font-size:12px;color:var(--faint)">লাইভ অর্ডার বুক — <span class="en">Live order book</span></span>
+        </div>
+        <div class="courier-grid" id="courierCards"></div>
+        <div class="card table-wrap">
+          <h3>📦 অর্ডার বুকিং <span class="en">Bookings</span></h3>
+          <table>
+            <thead>
+              <tr>
+                <th>অর্ডার <span class="en">Order</span></th>
+                <th>কাস্টমার <span class="en">Customer</span></th>
+                <th class="hide-t">পার্ট <span class="en">Part</span></th>
+                <th class="num">Qty</th>
+                <th>সোর্স <span class="en">Source</span></th>
+                <th class="hide-m">কুরিয়ার <span class="en">Courier</span></th>
+                <th>স্ট্যাটাস <span class="en">Status</span></th>
+                <th class="num">টোটাল ৳ <span class="en">Total</span></th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="orderBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============ VENDORS ============ -->
+      <section id="tab-vendors" class="tab">
+        <div class="sec-head" style="display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap">
+          <div style="flex:1;min-width:260px">
+            <h2>📞 ভেন্ডর পরিচিতি <span class="en">Vendor Contacts</span></h2>
+            <p class="sub">ওয়ান-ট্যাপ হোয়াটসঅ্যাপ (দ্বিভাষিক মেসেজ) ও কল — ব্র্যান্ড অনুযায়ী ম্যাচ করা ভেন্ডর। ✏️ দিয়ে নাম, নম্বর ও ব্র্যান্ড এডিট করুন। <span class="en">One-tap WhatsApp with bilingual pre-filled message &amp; direct call — edit any vendor with ✏️.</span></p>
+          </div>
+          <button id="addVendorBtn" class="btn-red">➕ ভেন্ডর যোগ করুন <span class="en">Add Vendor</span></button>
+        </div>
+        <div class="vendor-grid" id="vendorCards"></div>
+      </section>
+
+      <!-- ============ RETURNS ============ -->
+      <section id="tab-returns" class="tab">
+        <div class="sec-head">
+          <h2>↩️ রিটার্ন ও ফেরত <span class="en">Returns &amp; Refunds</span></h2>
+          <p class="sub">ডেলিভারড অর্ডার রিটার্ন করলে স্টক অটো ফিরে আসবে এবং কুরিয়ার রেভিনিউ থেকে বাদ যাবে। <span class="en">Returning a delivered order restores stock and removes it from revenue.</span></p>
+        </div>
+        <div class="kpis" id="retKpis"></div>
+        <div class="card table-wrap">
+          <h3>↩️ রিটার্ন তালিকা <span class="en">Returned Orders</span></h3>
+          <table>
+            <thead>
+              <tr>
+                <th>অর্ডার <span class="en">Order</span></th>
+                <th>পার্ট <span class="en">Part</span></th>
+                <th class="num">Qty</th>
+                <th class="num">ভ্যালু <span class="en">Value</span></th>
+                <th>কুরিয়ার <span class="en">Courier</span></th>
+                <th class="hide-m">সোর্স <span class="en">Source</span></th>
+                <th>রিটার্নের সময় <span class="en">Returned At</span></th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="retBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============ ANALYTICS ============ -->
+      <section id="tab-analytics" class="tab">
+        <div class="sec-head">
+          <h2>📊 অ্যানালিটিক্স <span class="en">Analytics — live charts</span></h2>
+          <p class="sub">ডেলিভারড অর্ডার থেকে লাইভ হিসাব — সিমুলেশন চললে চার্ট আপডেট হয়। <span class="en">Computed from delivered orders; updates as the simulation runs.</span></p>
+        </div>
+        <div class="kpis" id="anKpis"></div>
+        <div class="an-grid">
+          <div class="card"><h3>📅 ৭ দিনের বিক্রয় <span class="en">Sales — last 7 days</span></h3><div id="anDaily"></div></div>
+          <div class="card"><h3>📡 সোর্স অনুযায়ী রেভিনিউ <span class="en">Revenue by Source</span></h3><div id="anSource"></div></div>
+          <div class="card"><h3>🛵 কুরিয়ার অনুযায়ী রেভিনিউ <span class="en">Revenue by Courier</span></h3><div id="anCourier"></div></div>
+          <div class="card"><h3>🗂️ ক্যাটাগরি শেয়ার <span class="en">Category Share (units)</span></h3><div id="anCat"></div></div>
+        </div>
+        <div class="card table-wrap">
+          <h3>🏆 টপ পার্টস <span class="en">Top Parts by Units Sold</span></h3>
+          <table>
+            <thead>
+              <tr>
+                <th class="num">#</th>
+                <th>পার্ট <span class="en">Part</span></th>
+                <th class="num">ইউনিট <span class="en">Units</span></th>
+                <th class="num">রেভিনিউ <span class="en">Revenue</span></th>
+                <th class="num hide-t">প্রফিট <span class="en">Profit</span></th>
+              </tr>
+            </thead>
+            <tbody id="anTop"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============ REPORT (print view) ============ -->
+      <section id="tab-report" class="tab">
+        <div class="card rep-actions no-print" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+          <button id="printReport" class="btn-red">🖨️ প্রিন্ট / সেভ PDF <span class="en">Print / Save as PDF</span></button>
+          <span style="font-size:12.5px;color:var(--muted)">প্রিন্ট ভিউ — শুধু রিপোর্ট প্রিন্ট হবে, বাকি UI হাইড থাকবে। <span class="en">Print view shows the report only.</span></span>
+        </div>
+        <div id="reportRoot"></div>
+      </section>
+    </main>
+
+    <!-- ================= SIDE PANEL (360px) ================= -->
+    <aside class="side">
+      <div class="card side-kpis" id="sideKpis"></div>
+
+      <div class="card">
+        <h3>🛵 কুরিয়ার সামারি <span class="en">Courier Summary</span></h3>
+        <div id="sideCouriers"></div>
+      </div>
+
+      <div class="card side-sim">
+        <h3>📡 লাইভ সিমুলেশন <span class="en">Live Simulation</span></h3>
+        <button id="simToggleSide" class="btn-red big">
+          <span id="simToggleSideIcon">▶</span>
+          <span><span id="simToggleSideLabel">লাইভ সিমুলেশন শুরু করুন</span><br><span class="en">Start Live Simulation</span></span>
+        </button>
+        <p class="sim-sources">সোর্স: 💬 Messenger · 🟢 WhatsApp · 🌐 Website — স্টক অটো কমবে, কুরিয়ার অটো এগোবে।</p>
+        <div class="feed" id="simFeed"><div class="feed-empty">— লাইভ ফিড ফাঁকা · start the simulation to watch orders stream in —</div></div>
+      </div>
+
+      <div class="restock-wrap">
+        <button id="restockBtn" class="btn-red big">🚨 ১-ক্লিক রিস্টক <span class="en">1-Click Restock</span></button>
+        <p class="restock-note">কম স্টকের সব পার্ট + টপ ৩ ভেন্ডর — সরাসরি কল / হোয়াটসঅ্যাপ লিংক।<br><span class="en">Every low-stock part with top-3 matched vendors &amp; direct links.</span></p>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ================= FOOTER ================= -->
+  <footer>
+    <div class="f-brand">
+      <span class="f-logo">BP</span>
+      <span>BikePartsBD<span style="color:var(--red)">.</span>net</span>
+      <span>© 2026 Kayi Corporation · Jashore, Bangladesh</span>
+      <span id="rateInfo" style="font-size:11px;color:var(--faint)">💱 রেট সোর্স: —</span>
+    </div>
+    <div>
+      <a href="https://bikepartsbd.net" target="_blank" rel="noopener">bikepartsbd.net</a>
+      <span style="margin:0 8px;opacity:.4">|</span>
+      <button class="reset-btn" id="printReportLink">🖨️ রিপোর্ট প্রিন্ট <span class="en" style="font-size:10px">Print Report</span></button>
+      <span style="margin:0 8px;opacity:.4">|</span>
+      <button class="reset-btn" id="resetDemo">↺ ডেমো ডেটা রিসেট <span class="en" style="font-size:10px">Reset Demo Data</span></button>
+    </div>
+  </footer>
+</div>
+
+<!-- ================= MOBILE ACTION BAR ================= -->
+<div class="mobile-actions">
+  <button id="restockBtnMobile" class="btn-red">🚨 ১-ক্লিক রিস্টক</button>
+  <button id="simToggleMobile" class="btn">▶ সিমুলেশন <span class="en">Sim</span></button>
+</div>
+
+<!-- ================= RESTOCK MODAL ================= -->
+<div class="modal-backdrop" id="restockModal" hidden>
+  <div class="modal">
+    <div class="modal-head">
+      <h2>🚨 ইমার্জেন্সি রিস্টক <span class="en">Emergency Restock — low stock parts with top 3 matched vendors</span></h2>
+      <button class="close" id="closeRestock" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body" id="restockBody"></div>
+  </div>
+</div>
+
+<!-- ================= VENDOR MODAL ================= -->
+<div class="modal-backdrop" id="vendorModal" hidden>
+  <div class="modal" style="max-width:540px">
+    <div class="modal-head">
+      <h2>📞 ভেন্ডর যোগ / এডিট <span class="en">Add / Edit Vendor — WhatsApp &amp; call number</span></h2>
+      <button class="close" id="closeVendor" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="vendorForm" autocomplete="off">
+        <div class="v-form-grid">
+          <div class="field">
+            <label>ভেন্ডরের নাম (EN) <span class="en">Vendor Name</span></label>
+            <input id="vEn" type="text" placeholder="e.g. Dhaka Motors Ltd.">
+          </div>
+          <div class="field">
+            <label>বাংলা নাম <span class="en">Name (BN)</span></label>
+            <input id="vBn" type="text" placeholder="ঢাকা মোটরস লিমিটেড">
+          </div>
+          <div class="field">
+            <label>📱 মোবাইল / হোয়াটসঅ্যাপ <span class="en">Phone / WhatsApp</span></label>
+            <input id="vPhone" type="tel" placeholder="+8801XXX-XXXXXX">
+          </div>
+          <div class="field">
+            <label>📍 এলাকা (EN) <span class="en">Area</span></label>
+            <input id="vArea" type="text" placeholder="Motijheel, Dhaka">
+          </div>
+          <div class="field">
+            <label>📍 এলাকা (BN) <span class="en">Area (BN)</span></label>
+            <input id="vAreaBn" type="text" placeholder="মতিঝিল, ঢাকা">
+          </div>
+          <div class="field" style="grid-column:1/-1">
+            <label>🏷️ ব্র্যান্ড ম্যাচ <span class="en">Brands this vendor supplies</span></label>
+            <div class="brand-checks" id="vBrands"></div>
+          </div>
+        </div>
+        <div class="v-form-actions">
+          <button type="submit" class="btn-red">💾 সেভ করুন <span class="en">Save</span></button>
+          <button type="button" id="vDelete" class="btn-ghost" hidden>🗑 ডিলিট <span class="en">Delete</span></button>
+          <button type="button" id="vCancel" class="btn-ghost">বাতিল <span class="en">Cancel</span></button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<script>
+/* =====================================================
+   BikePartsBD.net — Inventory OS  ·  Kayi Corporation
+   Single-file app: inventory + courier + vendors + sim
+   ===================================================== */
+'use strict';
+
+/* ---------- helpers ---------- */
+const $  = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const store = {
+  get(k, fb){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : fb; }catch(e){ return fb; } },
+  set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+};
+/* ---------- currency (base data stays BDT) ---------- */
+const CURRENCIES = {
+  BDT:{sym:'৳', rate:1,     dec:0},
+  USD:{sym:'$', rate:0.0091, dec:2},
+  EUR:{sym:'€', rate:0.0084, dec:2},
+  GBP:{sym:'£', rate:0.0072, dec:2},
+  INR:{sym:'₹', rate:0.79,   dec:2}
+};
+let currency = store.get('bpbd_currency', 'BDT');
+if (!CURRENCIES[currency]) currency = 'BDT';
+const curInfo = () => CURRENCIES[currency];
+const money = n => {
+  const c = curInfo();
+  const v = n * c.rate;
+  const fmt = x => c.sym + x.toLocaleString('en-IN', {minimumFractionDigits:c.dec, maximumFractionDigits:c.dec});
+  return v < 0 ? '-' + fmt(Math.abs(v)) : fmt(v);
+};
+function applyRates(ratesObj, src){
+  const map = {USD:ratesObj.USD, EUR:ratesObj.EUR, GBP:ratesObj.GBP, INR:ratesObj.INR};
+  let ok = false;
+  Object.keys(map).forEach(k => {
+    if (isFinite(map[k]) && map[k] > 0){ CURRENCIES[k].rate = map[k]; ok = true; }
+  });
+  if (ok){
+    store.set('bpbd_rates', {t: Date.now(), src, r: map});
+    updateRateInfo(src);
+    renderAll();
+  } else {
+    updateRateInfo('ফলব্যাক');
+  }
+}
+function updateRateInfo(src){
+  const el = $('#rateInfo');
+  if (!el) return;
+  const t = new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  el.innerHTML = `💱 রেট: ${esc(src || 'ডিফল্ট')} · ${t} <span class="en" style="font-size:10px">rates</span>`;
+}
+function fetchRates(){
+  const openErFallback = () => {
+    try{
+      fetch('https://open.er-api.com/v6/latest/BDT')
+        .then(r => r.json())
+        .then(d => {
+          if (d && d.result === 'success' && d.rates) applyRates(d.rates, 'open.er-api.com');
+          else updateRateInfo('ফলব্যাক');
+        })
+        .catch(() => updateRateInfo('ফলব্যাক'));
+    }catch(e){ updateRateInfo('ফলব্যাক'); }
+  };
+  try{
+    fetch('https://api.frankfurter.app/latest?from=BDT&to=USD,EUR,GBP,INR')
+      .then(r => r.json())
+      .then(d => {
+        if (d && d.rates && d.rates.USD) applyRates(d.rates, 'frankfurter.app');
+        else openErFallback();
+      })
+      .catch(openErFallback);
+  }catch(e){ openErFallback(); }
+}
+const pct = (a,b) => b ? (a/b*100).toFixed(1) + '%' : '—';
+const timeStr = () => new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+const dtStr = iso => {
+  const d = new Date(iso);
+  return d.toLocaleDateString('en-GB',{day:'numeric',month:'short'}) + ' ' + d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+};
+const LOW_STOCK = 5;
+const rand = arr => arr[Math.floor(Math.random()*arr.length)];
+const rint = (a,b) => a + Math.floor(Math.random()*(b-a+1));
+
+/* ---------- English → Bangla dictionary (70+ terms) ---------- */
+const DICT = {
+  yamaha:'ইয়ামাহা', suzuki:'সুজুকি', bajaj:'বাজাজ', honda:'হোন্ডা', tvs:'টিভিএস', hero:'হিরো', gixxer:'জিক্সার', discover:'ডিসকভার', fzs:'এফজেডএস', r15:'আর১৫', pulsar:'পালসার', apache:'অ্যাপাচি', shine:'শাইন', splendor:'স্প্লেন্ডর', rtr:'আরটিআর', ns:'এনএস', cb:'সিবি', air:'এয়ার', '12v':'১২ভি',
+  engine:'ইঞ্জিন', oil:'তেল', filter:'ফিল্টার', clutch:'ক্লাচ', plate:'প্লেট', set:'সেট', piston:'পিস্টন', ring:'রিং', cylinder:'সিলিন্ডার', valve:'ভালভ',
+  gasket:'গ্যাসকেট', carburetor:'কার্বুরেটর', spark:'স্পার্ক', plug:'প্লাগ', cam:'ক্যাম', shaft:'শ্যাফট', bearing:'বিয়ারিং', bush:'বুশ', pump:'পাম্প', seal:'সিল',
+  brake:'ব্রেক', shoe:'সু', pad:'প্যাড', disc:'ডিস্ক', drum:'ড্রাম', caliper:'ক্যালিপার', master:'মাস্টার', lever:'লিভার', cable:'ক্যাবল', throttle:'থ্রটল',
+  chain:'চেইন', sprocket:'স্প্রকেট', kit:'কিট', gear:'গিয়ার', axle:'অ্যাক্সেল',
+  headlight:'হেডলাইট', light:'লাইট', lamp:'ল্যাম্প', bulb:'বাল্ব', battery:'ব্যাটারি', horn:'হর্ন', coil:'কয়েল', switch:'সুইচ', indicator:'ইন্ডিকেটর', speedometer:'স্পিডোমিটার', relay:'রিলে', fuse:'ফিউজ',
+  mirror:'মিরর', handle:'হ্যান্ডেল', guard:'গার্ড', mudguard:'মাডগার্ড', fender:'ফেন্ডার', seat:'সিট', cover:'কভার', tank:'ট্যাংক', lock:'তালা', key:'চাবি', stand:'স্ট্যান্ড', grip:'গ্রিপ',
+  fairing:'ফেয়ারিং', bumper:'বাম্পার', rim:'রিম', spoke:'স্পোক', wheel:'চাকা', tyre:'টায়ার', tire:'টায়ার', tube:'টিউব', footrest:'ফুটরেস্ট', foot:'ফুট', rest:'রেস্ট',
+  shock:'শক', absorber:'অ্যাবজরবার', fork:'ফর্ক', spring:'স্প্রিং', suspension:'সাসপেনশন',
+  rear:'পেছনের', front:'সামনের', side:'সাইড', center:'সেন্টার', centre:'সেন্টার', outer:'বাইরের', inner:'ভেতরের',
+  complete:'কমপ্লিট', original:'অরিজিনাল', new:'নতুন', small:'ছোট', big:'বড়', plus:'প্লাস', assembly:'অ্যাসেম্বলি', model:'মডেল', heavy:'হেভি', standard:'স্ট্যান্ডার্ড', bar:'বার', cap:'ক্যাপ'
+};
+
+/* ---------- constants: brands / categories / couriers / sources / vendors ---------- */
+const BRAND_LIST = [
+  ['yamaha','Yamaha','ইয়ামাহা'], ['suzuki','Suzuki','সুজুকি'], ['bajaj','Bajaj','বাজাজ'],
+  ['honda','Honda','হোন্ডা'], ['tvs','TVS','টিভিএস'], ['hero','Hero','হিরো']
+];
+const BRAND_BN = Object.fromEntries(BRAND_LIST.map(b => [b[1], b[2]]));
+
+const CATEGORIES = [
+  {en:'Brakes',            bn:'ব্রেক',             keys:['brake','shoe','pad','disc','drum','caliper','master cylinder']},
+  {en:'Chain & Sprocket',  bn:'চেইন ও স্প্রকেট',    keys:['chain','sprocket']},
+  {en:'Engine',            bn:'ইঞ্জিন',            keys:['engine','piston','ring','cylinder','valve','clutch','oil','filter','gasket','carburetor','plug','cam','bearing','bush','pump','seal']},
+  {en:'Electrical',        bn:'ইলেকট্রিক্যাল',      keys:['headlight','light','battery','horn','coil','switch','indicator','speedometer','lamp','bulb','relay','fuse']},
+  {en:'Body & Frame',      bn:'বডি ও ফ্রেম',        keys:['mirror','handle','guard','mudguard','fender','seat','tank','cover','lock','stand','grip','fairing','bumper','rim','spoke','wheel','tyre','tire','tube','foot','rest','key']},
+  {en:'Suspension',        bn:'সাসপেনশন',          keys:['shock','absorber','fork','spring','suspension']},
+  {en:'Controls',          bn:'কন্ট্রোল',           keys:['cable','lever','throttle']}
+];
+const CAT_BN = Object.fromEntries(CATEGORIES.map(c => [c.en, c.bn]));
+
+const COURIERS = [
+  {id:'sundarban', en:'Sundarban Courier', bn:'সুন্দরবন কুরিয়ার', icon:'🛵'},
+  {id:'sa',        en:'SA Paribahan',     bn:'এসএ পরিবহন',       icon:'🚌'},
+  {id:'karotoa',   en:'Karotoa Courier',  bn:'করতোয়া কুরিয়ার',  icon:'🚚'},
+  {id:'janani',    en:'Janani Express',   bn:'জননী এক্সপ্রেস',    icon:'📦'},
+  {id:'ecourier',  en:'eCourier',         bn:'ইকুরিয়ার',         icon:'⚡'},
+  {id:'pathao',    en:'Pathao Courier',   bn:'পাঠাও কুরিয়ার',     icon:'🏍️'}
+];
+const COURIER_BY_ID = Object.fromEntries(COURIERS.map(c => [c.id, c]));
+
+const SOURCES = {
+  messenger:{en:'Messenger', bn:'মেসেঞ্জার', color:'#0084ff'},
+  whatsapp: {en:'WhatsApp',  bn:'হোয়াটসঅ্যাপ', color:'#25d366'},
+  website:  {en:'Website',   bn:'ওয়েবসাইট',  color:'#e10600'}
+};
+
+const STAGES = [
+  {en:'Placed',            bn:'অর্ডার হয়েছে'},
+  {en:'Picked Up',         bn:'পিকআপ হয়েছে'},
+  {en:'In Transit',        bn:'পথে আছে'},
+  {en:'Out for Delivery',  bn:'ডেলিভারির জন্য বের হয়েছে'},
+  {en:'Delivered',         bn:'ডেলিভারি সম্পন্ন'}
+];
+
+const VENDORS_DEFAULT = [
+  {id:1, en:'Dhaka Motors Ltd.',    bn:'ঢাকা মোটরস লিমিটেড',   area:'Motijheel, Dhaka',   areaBn:'মতিঝিল, ঢাকা',    phone:'+8801711-234567', brands:['Yamaha','Suzuki']},
+  {id:2, en:'Rahmania Auto Parts',  bn:'রহমানিয়া অটো পার্টস',  area:'Nawabpur, Dhaka',    areaBn:'নবাবপুর, ঢাকা',   phone:'+8801812-345678', brands:['Yamaha','Honda']},
+  {id:3, en:'Karim Auto Traders',   bn:'করিম অটো ট্রেডার্স',    area:'Khulna',             areaBn:'খুলনা',           phone:'+8801913-456789', brands:['Suzuki']},
+  {id:4, en:'Shahjalal Enterprise', bn:'শাহজালাল এন্টারপ্রাইজ', area:'Gulistan, Dhaka',    areaBn:'গুলিস্তান, ঢাকা',  phone:'+8801614-567890', brands:['Bajaj','TVS']},
+  {id:5, en:'Al-Madina Motor House',bn:'আল-মদিনা মোটর হাউজ',   area:'Churhat, Jashore',   areaBn:'চুড়হাট, যশোর',   phone:'+8801315-678901', brands:['Bajaj','Suzuki']},
+  {id:6, en:'Bikeparts Dhaka',      bn:'বাইকপার্টস ঢাকা',       area:'Bongshal, Dhaka',    areaBn:'বংশাল, ঢাকা',     phone:'+8801516-789012', brands:['Yamaha','Suzuki','Bajaj']},
+  {id:7, en:'Mirpur Bike Parts',    bn:'মিরপুর বাইক পার্টস',    area:'Mirpur, Dhaka',      areaBn:'মিরপুর, ঢাকা',    phone:'+8801741-234567', brands:['Honda','Hero']},
+  {id:8, en:'Chattogram Auto Supply', bn:'চট্টগ্রাম অটো সাপ্লাই', area:'Dewanhat, Chattogram', areaBn:'দেওয়ানহাট, চট্টগ্রাম', phone:'+8801842-345678', brands:['TVS','Hero']},
+  {id:9, en:'Jashore Bike House',   bn:'যশোর বাইক হাউজ',        area:'Churhat, Jashore',   areaBn:'চুড়হাট, যশোর',   phone:'+8801943-456789', brands:['Yamaha','Bajaj','Honda']}
+];
+let vendors = store.get('bpbd_vendors', null);
+if (!Array.isArray(vendors) || !vendors.length) vendors = VENDORS_DEFAULT.slice();
+
+const CUSTOMERS = [
+  ['Rakib Hasan','রাকিব হাসান','Jashore'], ['Sumon Sheikh','সুমন শেখ','Khulna'], ['Tanvir Ahmed','তানভীর আহমেদ','Dhaka'],
+  ['Mehedi Hasan','মেহেদী হাসান','Satkhira'], ['Naim Islam','নাঈম ইসলাম','Jashore'], ['Fahim Rahman','ফাহিম রহমান','Narail'],
+  ['Ariful Islam','আরিফুল ইসলাম','Magura'], ['Sabbir Ahmed','সাব্বির আহমেদ','Jhenaidah'], ['Imran Kabir','ইমরান কবির','Chuadanga'],
+  ['Riyad Hossain','রিয়াদ হোসেন','Khulna'], ['Zubayer Karim','জুবায়ের করিম','Dhaka'], ['Sakib Khan','সাকিব খান','Rajshahi']
+];
+
+/* ---------- auto: translation, brand, category ---------- */
+function translateName(en){
+  return String(en).split(/\s+/).map(w => {
+    const core = w.replace(/[.,;:'"()!?]+$/,'');
+    const found = DICT[core.toLowerCase()];
+    return found ? w.replace(core, found) : w;
+  }).join(' ');
+}
+function detectBrand(name){
+  const l = String(name).toLowerCase();
+  for (const [k, en] of BRAND_LIST) if (l.includes(k)) return en;
+  return 'Other';
+}
+function detectCategory(name){
+  const l = String(name).toLowerCase();
+  for (const c of CATEGORIES){
+    for (const k of c.keys) if (l.includes(k)) return c.en;
+  }
+  return 'Other';
+}
+
+/* ---------- data: parts ---------- */
+const DATA_V = 2; // bump to reseed the expanded demo dataset
+let parts = store.get('bpbd_parts', null);
+let orders = store.get('bpbd_orders', null);
+if (store.get('bpbd_v', 0) < DATA_V){ parts = null; orders = null; }
+let partsSeq = 1000;
+
+function mkPart(name, buy, sell, stock){
+  const sku = 'BP-' + (++partsSeq);
+  return {
+    id: sku, sku, name: String(name), nameBn: translateName(name),
+    brand: detectBrand(name), category: detectCategory(name),
+    buy: +buy, sell: +sell, stock: +stock || 0
+  };
+}
+function seedParts(){
+  partsSeq = 1000;
+  return [
+    mkPart('Yamaha FZS V2 Rear Brake Shoe', 320, 450, 4),
+    mkPart('Yamaha R15 V3 Chain Sprocket Kit', 1450, 1950, 9),
+    mkPart('Suzuki Gixxer Oil Filter', 90, 160, 26),
+    mkPart('Bajaj Discover 125 Clutch Plate Set', 480, 720, 3),
+    mkPart('Suzuki Gixxer Headlight Assembly', 1150, 1550, 11),
+    mkPart('Yamaha FZS V3 Front Brake Pad', 260, 380, 6),
+    mkPart('Suzuki Gixxer 155 Air Filter', 140, 220, 14),
+    mkPart('Bajaj Pulsar 150 Clutch Cable', 85, 140, 18),
+    mkPart('Bajaj Pulsar 150 Spark Plug', 120, 180, 3),
+    mkPart('Honda CB Shine 125 Rear Brake Shoe', 300, 430, 8),
+    mkPart('Honda CB Shine Air Filter', 130, 210, 5),
+    mkPart('TVS Apache RTR 160 Chain Sprocket Kit', 1380, 1850, 7),
+    mkPart('TVS Apache RTR Front Brake Pad', 240, 360, 12),
+    mkPart('Hero Splendor Plus Clutch Plate Set', 420, 640, 2),
+    mkPart('Hero Splendor Plus Horn (12V)', 95, 150, 22),
+    mkPart('Yamaha FZS V3 Rear Shock Absorber', 1250, 1650, 4),
+    mkPart('Suzuki Gixxer Battery 12V 5Ah', 1150, 1500, 9),
+    mkPart('Bajaj Pulsar NS160 Headlight Bulb', 150, 240, 16),
+    mkPart('Honda CB Shine Carburetor Assembly', 1050, 1400, 3),
+    mkPart('TVS Apache RTR Rear Wheel Bearing', 180, 260, 10)
+  ];
+}
+if (!parts){ parts = seedParts(); }
+partsSeq = parts.reduce((m,p) => Math.max(m, parseInt(p.sku.replace(/\D/g,'')) || 0), 1000);
+const partProfit = p => p.sell - p.buy;
+
+/* ---------- data: orders ---------- */
+let orderSeq = 1000;
+
+function mkOrder(part, qty, source, courier, stage, hrsAgo, customer){
+  const ts = [];
+  for (let i=0; i<5; i++) ts.push(i <= stage ? new Date(Date.now() - (hrsAgo||0)*3600e3 - (stage-i)*rint(1,3)*3600e3).toISOString() : null);
+  const c = customer || rand(CUSTOMERS);
+  return {
+    id: 'BP-ORD-' + (++orderSeq),
+    partId: part.id, partName: part.name, partBn: part.nameBn,
+    qty, unit: part.sell, profitUnit: part.sell - part.buy,
+    source, courier, stage, ts,
+    custEn: c[0], custBn: c[1], city: c[2]
+  };
+}
+function seedOrders(){
+  orderSeq = 1000;
+  const P = id => parts.find(p => p.id === id);
+  return [
+    mkOrder(P('BP-1001'), 2, 'messenger', 'sundarban', 4, 26),
+    mkOrder(P('BP-1003'), 5, 'whatsapp',  'sa',        3, 7),
+    mkOrder(P('BP-1002'), 1, 'website',   'karotoa',   2, 5),
+    mkOrder(P('BP-1004'), 1, 'messenger', 'janani',    1, 3),
+    mkOrder(P('BP-1005'), 1, 'whatsapp',  'sundarban', 0, 1),
+    mkOrder(P('BP-1003'), 3, 'website',   'sa',        4, 20),
+    mkOrder(P('BP-1001'), 1, 'messenger', 'karotoa',   2, 9),
+    mkOrder(P('BP-1006'), 2, 'messenger', 'ecourier',  4, 15),
+    mkOrder(P('BP-1009'), 2, 'whatsapp',  'janani',    3, 10),
+    mkOrder(P('BP-1013'), 1, 'website',   'ecourier',  2, 6),
+    mkOrder(P('BP-1015'), 1, 'website',   'sundarban', 4, 30),
+    mkOrder(P('BP-1007'), 1, 'messenger', 'pathao',    0, 2),
+    mkOrder(P('BP-1008'), 1, 'whatsapp',  'pathao',    1, 4),
+    mkOrder(P('BP-1018'), 1, 'messenger', 'karotoa',   1, 8)
+  ];
+}
+let ordersSeeded = false;
+if (!orders){ orders = seedOrders(); ordersSeeded = true; }
+orderSeq = orders.reduce((m,o) => Math.max(m, parseInt(o.id.replace(/\D/g,'')) || 0), 1000);
+store.set('bpbd_v', DATA_V);
+const orderTotal = o => o.qty * o.unit;
+const orderProfit = o => o.qty * o.profitUnit;
+const isDelivered = o => o.stage === 4 && o.status !== 'returned';
+const isReturned = o => o.status === 'returned';
+// seed one returned order so the Returns module is discoverable (fresh seed only)
+if (ordersSeeded){
+  const ro = orders.find(o => o.id === 'BP-ORD-1001');
+  if (ro && !isReturned(ro)){
+    ro.status = 'returned';
+    ro.returnedAt = new Date(Date.now() - 3*3600e3).toISOString();
+    const rp = parts.find(p => p.id === ro.partId);
+    if (rp) rp.stock += ro.qty;
+  }
+}
+
+/* ---------- simulation state ---------- */
+let sim = { running:false, timer:null };
+let feed = store.get('bpbd_feed', []);
+
+function feedLog(kind, color, html, extra){
+  feed.unshift({kind, color, html, extra, t: Date.now()});
+  if (feed.length > 40) feed.length = 40;
+  store.set('bpbd_feed', feed);
+  renderFeed();
+}
+
+/* ---------- persistence ---------- */
+function saveAll(){
+  store.set('bpbd_parts', parts);
+  store.set('bpbd_orders', orders);
+}
+let lastRender = { inv:true, courier:true, vendors:true, side:true, top:true };
+
+function renderAll(force){
+  renderInventory();
+  renderCourier();
+  renderVendors();
+  renderSide();
+  renderFeed();
+  if ($('#tab-returns').classList.contains('active')) renderReturns();
+  if ($('#tab-analytics').classList.contains('active')) renderAnalytics();
+  if ($('#tab-report').classList.contains('active')) renderReport();
+}
+
+/* =====================================================
+   INVENTORY RENDERING
+   ===================================================== */
+function invStats(list){
+  const units = list.reduce((s,p) => s + p.stock, 0);
+  const value = list.reduce((s,p) => s + p.buy*p.stock, 0);
+  const pot   = list.reduce((s,p) => s + (p.sell-p.buy)*p.stock, 0);
+  const low   = list.filter(p => p.stock <= LOW_STOCK).length;
+  return {n:list.length, units, value, pot, low};
+}
+
+function renderBrandChips(){
+  const counts = {};
+  parts.forEach(p => counts[p.brand] = (counts[p.brand]||0) + 1);
+  const chips = ['All', ...BRAND_LIST.map(b=>b[1]).filter(b => counts[b])].map(b => {
+    const on = b === 'All' ? !state.brandFilter : state.brandFilter === b;
+    return `<button class="chip ${on?'on':''}" data-brand="${esc(b)}">${b==='All' ? 'সব' : esc(b)} <small>${b==='All' ? parts.length : (counts[b]||0)}</small></button>`;
+  }).join('');
+  $('#brandChips').innerHTML = chips;
+}
+
+function filteredParts(){
+  const q = (state.search || '').toLowerCase();
+  return parts.filter(p => {
+    if (state.brandFilter !== 'All' && p.brand !== state.brandFilter) return false;
+    if (state.lowOnly && p.stock > LOW_STOCK) return false;
+    if (q){
+      const hay = (p.name + ' ' + p.nameBn + ' ' + p.sku + ' ' + p.brand + ' ' + p.category).toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+}
+
+function renderInventory(){
+  const list = filteredParts();
+  const s = invStats(parts);
+
+  $('#invKpis').innerHTML = `
+    <div class="kpi"><div class="k-label">মোট SKU <span class="en">Total SKUs</span></div><div class="k-value mono">${s.n}</div></div>
+    <div class="kpi"><div class="k-label">মোট স্টক <span class="en">Total Units</span></div><div class="k-value mono">${s.units}</div></div>
+    <div class="kpi"><div class="k-label">স্টক ভ্যালু <span class="en">Stock Value (buy)</span></div><div class="k-value mono">${money(s.value)}</div></div>
+    <div class="kpi green"><div class="k-label">সম্ভাব্য প্রফিট <span class="en">Potential Profit</span></div><div class="k-value mono">${money(s.pot)}</div></div>
+    <div class="kpi red"><div class="k-label">লো স্টক ⚠️ <span class="en">Low Stock (≤${LOW_STOCK})</span></div><div class="k-value mono">${s.low}</div></div>`;
+
+  const rows = list.map(p => {
+    const low = p.stock <= LOW_STOCK;
+    return `<tr class="${low?'low':''}" id="row-${p.id}">
+      <td><span class="sku">${p.sku}</span></td>
+      <td class="part-cell">
+        <div class="p-en">${esc(p.name)}</div>
+        <div class="p-bn">${esc(p.nameBn)}</div>
+      </td>
+      <td class="hide-m"><span class="badge brand">${esc(p.brand)} <span class="en">${esc(BRAND_BN[p.brand] || 'অন্যান্য')}</span></span></td>
+      <td class="hide-t mut">${esc(p.category)} <span class="en" style="font-size:10px;color:var(--faint)">${esc(CAT_BN[p.category] || 'অন্যান্য')}</span></td>
+      <td class="num pos"><button class="cell-edit" data-id="${p.id}" data-field="buy">${money(p.buy)}</button></td>
+      <td class="num pos"><button class="cell-edit" data-id="${p.id}" data-field="sell">${money(p.sell)}</button></td>
+      <td class="num pos">
+        <button class="cell-edit" data-id="${p.id}" data-field="stock">${p.stock}</button>
+        ${low ? `<span class="badge stock-low" style="margin-left:6px">লো</span>` : ''}
+      </td>
+      <td class="num" style="color:var(--green)">${money(partProfit(p))}</td>
+      <td class="num hide-t mut">${pct(partProfit(p), p.sell)}</td>
+      <td><button class="icon-btn" data-del="${p.id}" title="ডিলিট / Delete">🗑</button></td>
+    </tr>`;
+  }).join('');
+
+  $('#invBody').innerHTML = rows.length
+    ? rows
+    : `<tr><td colspan="10"><div class="empty">কোনো পার্ট পাওয়া যায়নি — <b>Add Part</b> দিয়ে নতুন পার্ট যোগ করুন।<br><span class="en">No parts match your filter.</span></div></td></tr>`;
+
+  applyPendingFlash();
+}
+
+/* ---------- inline editing ---------- */
+function startEdit(btn){
+  const id = btn.dataset.id, field = btn.dataset.field;
+  const p = parts.find(x => x.id === id);
+  if (!p) return;
+  const isStock = field === 'stock';
+  const cur = curInfo();
+  const input = document.createElement('input');
+  input.type = 'number'; input.min = '0'; input.step = isStock ? '1' : 'any';
+  input.className = 'cell-input';
+  input.value = isStock ? p[field] : (p[field] * cur.rate).toFixed(cur.dec);
+  btn.replaceWith(input);
+  input.focus(); input.select();
+  let done = false;
+  const commit = () => {
+    if (done) return; done = true;
+    const raw = parseFloat(input.value);
+    if (isNaN(raw) || raw < 0){ renderInventory(); return; }
+    const newVal = isStock ? Math.round(raw) : Math.round(raw / cur.rate);
+    if (newVal !== p[field]){
+      const oldVal = p[field];
+      p[field] = newVal;
+      saveAll();
+      pendingFlash = {id, field, delta: p[field] - oldVal};
+      renderInventory();
+      toast(`${esc(p.name)} — ${field === 'buy' ? 'ক্রয়' : field === 'sell' ? 'বিক্রয়' : 'স্টক'} আপডেট হয়েছে ✓ <span class="en" style="font-size:11px;opacity:.8">${field} updated</span>`);
+    } else {
+      renderInventory();
+    }
+  };
+  const cancel = () => { if (done) return; done = true; renderInventory(); };
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter'){ e.preventDefault(); commit(); }
+    if (e.key === 'Escape'){ e.preventDefault(); cancel(); }
+  });
+  input.addEventListener('blur', commit);
+}
+let pendingFlash = null;
+function applyPendingFlash(){
+  if (!pendingFlash) return;
+  const {id, field, delta} = pendingFlash;
+  pendingFlash = null;
+  const cell = document.querySelector(`.cell-edit[data-id="${id}"][data-field="${field}"]`);
+  if (!cell) return;
+  cell.classList.add('flash');
+  const pill = document.createElement('span');
+  pill.className = 'delta-pill' + (delta < 0 ? ' down' : '');
+  pill.textContent = (delta > 0 ? '+' : '') + money(delta);
+  cell.parentElement.appendChild(pill);
+  setTimeout(() => pill.remove(), 1400);
+}
+
+/* ---------- add part ---------- */
+$('#addPartForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const name = $('#addName').value.trim();
+  const buy = parseFloat($('#addBuy').value);
+  const sell = parseFloat($('#addSell').value);
+  if (!name){ toast('⚠️ পার্টের নাম দিন — <span class="en" style="font-size:11px;opacity:.8">Enter product name</span>', 'red'); $('#addName').focus(); return; }
+  if (isNaN(buy) || buy <= 0){ toast('⚠️ সঠিক ক্রয় মূল্য দিন — <span class="en" style="font-size:11px;opacity:.8">Valid buying price required</span>', 'red'); $('#addBuy').focus(); return; }
+  if (isNaN(sell) || sell <= 0){ toast('⚠️ সঠিক বিক্রয় মূল্য দিন — <span class="en" style="font-size:11px;opacity:.8">Valid selling price required</span>', 'red'); $('#addSell').focus(); return; }
+
+  const p = mkPart(name, buy, sell, 0);
+  parts.push(p);
+  saveAll();
+  renderBrandChips(); renderInventory(); renderSide();
+  $('#addName').value = ''; $('#addBuy').value = ''; $('#addSell').value = '';
+  $('#addName').focus();
+  pendingFlash = {id:p.id, field:'stock', delta:0};
+  toast(`➕ <b>${esc(p.name)}</b> যোগ হয়েছে — SKU <span class="mono">${p.sku}</span> · ${esc(p.brand)} · ${esc(p.category)}<br><span class="en" style="font-size:11px;opacity:.8">Auto: SKU · বাংলা · brand · category · profit · margin</span>`, 'green');
+});
+
+/* ---------- inventory events (delegation) ---------- */
+$('#invBody').addEventListener('click', e => {
+  const editBtn = e.target.closest('.cell-edit');
+  if (editBtn){ startEdit(editBtn); return; }
+  const delBtn = e.target.closest('[data-del]');
+  if (delBtn){
+    const p = parts.find(x => x.id === delBtn.dataset.del);
+    if (p && confirm(`Delete "${p.name}"? — পার্টটি মুছবেন?`)){
+      parts = parts.filter(x => x.id !== p.id);
+      saveAll();
+      renderBrandChips(); renderInventory(); renderSide();
+      toast(`🗑 ${esc(p.name)} ডিলিট হয়েছে <span class="en" style="font-size:11px;opacity:.8">Part removed</span>`);
+    }
+  }
+});
+
+/* =====================================================
+   COURIER RENDERING
+   ===================================================== */
+function courierStats(cid){
+  const list = orders.filter(o => o.courier === cid);
+  const del = list.filter(isDelivered);
+  const ret = list.filter(isReturned);
+  const pipe = list.filter(o => !isDelivered(o) && !isReturned(o));
+  return {
+    n: list.length,
+    delivered: del.length,
+    revenue: del.reduce((s,o) => s + orderTotal(o), 0),
+    profit: del.reduce((s,o) => s + orderProfit(o), 0),
+    pipeline: pipe.reduce((s,o) => s + orderTotal(o), 0),
+    pipelineN: pipe.length,
+    retN: ret.length,
+    retVal: ret.reduce((s,o) => s + orderTotal(o), 0)
+  };
+}
+
+function renderCourier(){
+  $('#courierCards').innerHTML = COURIERS.map(c => {
+    const s = courierStats(c.id);
+    return `<div class="c-card">
+      <div class="c-head">
+        <div class="c-ico">${c.icon}</div>
+        <div class="c-name">${esc(c.en)}<span class="bn">${esc(c.bn)}</span></div>
+      </div>
+      <div class="c-stats">
+        <div class="c-stat rev"><div class="s-label">গ্রস রেভিনিউ <span class="en">Gross Revenue</span></div><div class="s-value">${money(s.revenue)}</div></div>
+        <div class="c-stat prof"><div class="s-label">গ্রস প্রফিট <span class="en">Gross Profit</span></div><div class="s-value">${money(s.profit)}</div></div>
+        <div class="c-stat"><div class="s-label">পাইপলাইনে <span class="en">Pipeline Value</span></div><div class="s-value">${money(s.pipeline)}</div></div>
+        <div class="c-stat"><div class="s-label">অর্ডার <span class="en">Orders</span></div><div class="s-value">${s.n}</div></div>
+        <div class="c-stat"><div class="s-label">ডেলিভারড <span class="en">Delivered</span></div><div class="s-value">${s.delivered}</div></div>
+        <div class="c-stat"><div class="s-label">↩️ রিটার্ন <span class="en">Returns</span></div><div class="s-value">${s.retN} <span style="font-size:10.5px;color:var(--faint);font-family:var(--mono)">${money(s.retVal)}</span></div></div>
+      </div>
+      <div class="c-badges">
+        <span class="badge stock-ok">✓ ${s.delivered} ডেলিভারড <span class="en">Delivered</span></span>
+        <span class="badge ${s.pipelineN ? '' : 'stock-ok'}">${s.pipelineN} পথে <span class="en">In flight</span></span>
+        ${s.retN ? `<span class="badge stock-low">↩️ ${s.retN} রিটার্ন <span class="en">Returned</span></span>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+
+  const q = (state.orderSearch || '').toLowerCase();
+  const rows = orders.filter(o => !q || (o.id + ' ' + o.custEn + ' ' + o.custBn + ' ' + o.city + ' ' + o.partName + ' ' + o.partBn).toLowerCase().includes(q));
+  $('#orderBody').innerHTML = rows.map(o => {
+    const c = COURIER_BY_ID[o.courier];
+    const src = SOURCES[o.source];
+    const fillPct = (o.stage/4*100).toFixed(0);
+    return `<tr>
+      <td><span class="sku">${o.id}</span></td>
+      <td><div style="font-weight:600;font-size:13px">${esc(o.custEn)}</div><div style="font-size:11.5px;color:var(--muted)">${esc(o.custBn)} · ${esc(o.city)}</div></td>
+      <td class="hide-t" style="max-width:190px"><div style="font-weight:600;font-size:12.5px">${esc(o.partName)}</div><div style="font-size:11px;color:var(--muted)">${esc(o.partBn)}</div></td>
+      <td class="num mono">×${o.qty}</td>
+      <td><span class="src src-${o.source}">${src.en} <span class="en">${src.bn}</span></span></td>
+      <td class="hide-m" style="font-size:12.5px">${c.icon} ${esc(c.en)}<br><span style="font-size:10.5px;color:var(--muted)">${esc(c.bn)}</span></td>
+      <td>
+        <div class="tl">
+          <div class="tl-line"><div class="tl-fill" style="width:${fillPct}%"></div></div>
+          <div class="tl-steps">
+            ${STAGES.map((s,i) => `
+              <div class="tl-step ${i<o.stage?'done':''} ${i===o.stage?'cur':''}" title="${s.en} — ${o.ts[i] ? dtStr(o.ts[i]) : ''}">
+                <div class="tl-dot">${i<o.stage ? '✓' : i+1}</div>
+                <div class="tl-lbl">${s.bn}</div>
+              </div>`).join('')}
+          </div>
+          <div class="tl-cur">
+            ${STAGES[o.stage].bn}
+            <span class="t-time">${o.ts[o.stage] ? dtStr(o.ts[o.stage]) : '—'}</span>
+          </div>
+        </div>
+      </td>
+      <td class="num" style="color:${o.status==='returned' ? 'var(--red)' : (o.stage===4 ? 'var(--green)' : 'var(--text)')}">${money(orderTotal(o))}</td>
+      <td style="white-space:nowrap">${o.status === 'returned'
+        ? `<span class="badge stock-low">↩️ রিটার্নড <span class="en">Returned</span></span>`
+        : o.stage < 4
+          ? `<button class="adv-btn" data-adv="${o.id}" title="পরবর্তী ধাপে / Advance">→ এগিয়ে নিন</button>`
+          : `<span class="badge stock-ok">✓ সম্পন্ন</span> <button class="adv-btn" data-ret="${o.id}" title="রিটার্ন / Return">↩️</button>`}
+      </td>
+    </tr>`;
+  }).join('');
+
+  $('#orderBody').innerHTML = $('#orderBody').innerHTML || `<tr><td colspan="9"><div class="empty">কোনো অর্ডার নেই — সিমুলেশন শুরু করুন।<br><span class="en">No orders match.</span></div></td></tr>`;
+}
+
+$('#searchOrders').addEventListener('input', e => {
+  state.orderSearch = e.target.value;
+  renderCourier();
+});
+
+$('#orderBody').addEventListener('click', e => {
+  const retBtn = e.target.closest('[data-ret]');
+  if (retBtn){
+    const o = orders.find(x => x.id === retBtn.dataset.ret);
+    if (o) markReturned(o);
+    return;
+  }
+  const btn = e.target.closest('[data-adv]');
+  if (!btn) return;
+  const o = orders.find(x => x.id === btn.dataset.adv);
+  if (!o || o.stage >= 4) return;
+  advanceOrder(o, true);
+});
+
+function advanceOrder(o, manual){
+  if (!o || o.stage >= 4) return;
+  o.stage++;
+  o.ts[o.stage] = new Date().toISOString();
+  saveAll();
+  const c = COURIER_BY_ID[o.courier];
+  if (o.stage === 4){
+    feedLog('courier', 'var(--green)', `✅ <b>${esc(o.id)}</b> ডেলিভারি সম্পন্ন — ${esc(o.partName)} ×${o.qty} (${c.icon} ${esc(c.en)}) — <b>+${money(orderTotal(o))}</b> · প্রফিট ${money(orderProfit(o))}`);
+    toast(`🎉 ${esc(o.id)} ডেলিভারড — +${money(orderTotal(o))} <span class="en" style="font-size:11px;opacity:.8">Delivered via ${esc(c.en)}</span>`, 'green');
+  } else {
+    feedLog('courier', 'var(--muted)', `${c.icon} <b>${esc(o.id)}</b> → ${STAGES[o.stage].bn} <span class="en" style="font-size:10px">${STAGES[o.stage].en}</span> — ${esc(o.partName)}`);
+  }
+  renderCourier(); renderSide();
+  if (manual) toast(`🛵 ${esc(o.id)} → ${STAGES[o.stage].bn} <span class="en" style="font-size:11px;opacity:.8">${STAGES[o.stage].en}</span>`);
+}
+
+/* ---------- returns ---------- */
+function markReturned(o, silent){
+  if (!o || isReturned(o) || o.stage !== 4) return;
+  o.status = 'returned';
+  o.returnedAt = new Date().toISOString();
+  const p = parts.find(x => x.id === o.partId);
+  if (p){ p.stock += o.qty; pendingFlash = {id:p.id, field:'stock', delta:+o.qty}; }
+  saveAll();
+  feedLog('ret', 'var(--red)', `↩️ <b>${esc(o.id)}</b> রিটার্ন — ${esc(o.partName)} ×${o.qty} (${money(orderTotal(o))}) · স্টক ফেরত +${o.qty}`);
+  if (!silent) toast(`↩️ ${esc(o.id)} রিটার্ন হয়েছে — স্টক +${o.qty} <span class="en" style="font-size:11px;opacity:.8">Returned · stock restored</span>`, 'red');
+  renderAll();
+}
+function undoReturn(o){
+  if (!o || !isReturned(o)) return;
+  o.status = undefined;
+  o.returnedAt = null;
+  const p = parts.find(x => x.id === o.partId);
+  if (p){ p.stock = Math.max(0, p.stock - o.qty); pendingFlash = {id:p.id, field:'stock', delta:-o.qty}; }
+  saveAll();
+  feedLog('ret', 'var(--green)', `↩️ আনডু — <b>${esc(o.id)}</b> আবার ডেলিভারড হিসেবে গণ্য · স্টক −${o.qty}`);
+  toast(`↩️ ${esc(o.id)} আনডু হয়েছে <span class="en" style="font-size:11px;opacity:.8">Return undone</span>`);
+  renderAll();
+}
+function renderReturns(){
+  const ret = orders.filter(isReturned);
+  const del = orders.filter(o => o.stage === 4);
+  const retVal = ret.reduce((s,o) => s + orderTotal(o), 0);
+  const retUnits = ret.reduce((s,o) => s + o.qty, 0);
+  const rate = del.length ? (ret.length / del.length * 100).toFixed(1) + '%' : '0%';
+  $('#retKpis').innerHTML = `
+    <div class="kpi red"><div class="k-label">মোট রিটার্ন <span class="en">Total Returns</span></div><div class="k-value mono">${ret.length}</div></div>
+    <div class="kpi red"><div class="k-label">রিটার্ন ভ্যালু <span class="en">Returned Value</span></div><div class="k-value mono">${money(retVal)}</div></div>
+    <div class="kpi"><div class="k-label">ফেরত ইউনিট <span class="en">Units Restocked</span></div><div class="k-value mono">${retUnits}</div></div>
+    <div class="kpi"><div class="k-label">রিটার্ন রেট <span class="en">Return Rate</span></div><div class="k-value mono">${rate}</div></div>
+    <div class="kpi green"><div class="k-label">ডেলিভারড (সব) <span class="en">Delivered (all)</span></div><div class="k-value mono">${del.length}</div></div>`;
+  $('#retBody').innerHTML = ret.length ? ret.map(o => `
+    <tr>
+      <td><span class="sku">${o.id}</span></td>
+      <td style="max-width:200px"><div style="font-weight:600;font-size:13px">${esc(o.partName)}</div><div style="font-size:11.5px;color:var(--muted)">${esc(o.partBn)}</div></td>
+      <td class="num mono">×${o.qty}</td>
+      <td class="num" style="color:var(--red)">${money(orderTotal(o))}</td>
+      <td style="font-size:12.5px">${COURIER_BY_ID[o.courier].icon} ${esc(COURIER_BY_ID[o.courier].en)}</td>
+      <td class="hide-m"><span class="src src-${o.source}">${SOURCES[o.source].en}</span></td>
+      <td style="font-size:12px;color:var(--muted)">${o.returnedAt ? dtStr(o.returnedAt) : '—'}</td>
+      <td><button class="adv-btn" data-undo-ret="${o.id}" title="আবার ডেলিভারড করুন / Undo">↩️ আনডু</button></td>
+    </tr>`).join('')
+    : `<tr><td colspan="8"><div class="empty">কোনো রিটার্ন নেই ✓ — কুরিয়ার ট্যাবে ডেলিভারড অর্ডারে ↩️ চাপুন।<br><span class="en">No returns yet — press ↩️ on a delivered order in the Courier tab.</span></div></td></tr>`;
+}
+$('#retBody').addEventListener('click', e => {
+  const b = e.target.closest('[data-undo-ret]');
+  if (b){ const o = orders.find(x => x.id === b.dataset.undoRet); if (o) undoReturn(o); }
+});
+
+/* ---------- analytics ---------- */
+function moneyShort(n){
+  const c = curInfo();
+  const v = n * c.rate;
+  const num = Math.abs(v) >= 1000 ? (v/1000).toFixed(1) + 'k' : (Math.abs(v) >= 100 ? v.toFixed(0) : v.toFixed(c.dec));
+  return c.sym + num;
+}
+function barRow(label, value, max, color){
+  const w = max > 0 ? Math.max(3, value / max * 100) : 0;
+  return `<div class="bar-row">
+    <span class="bar-lbl" title="${esc(label)}">${esc(label)}</span>
+    <span class="bar-track"><span class="bar-fill" style="width:${w}%;background:${color || 'var(--red)'}"></span></span>
+    <span class="bar-val">${moneyShort(value)}</span>
+  </div>`;
+}
+function analytics(){
+  const del = orders.filter(isDelivered);
+  const ret = orders.filter(isReturned);
+  const revenue = del.reduce((s,o) => s + orderTotal(o), 0);
+  const profit = del.reduce((s,o) => s + orderProfit(o), 0);
+  const units = del.reduce((s,o) => s + o.qty, 0);
+  const now = new Date();
+  const days = [];
+  for (let i = 6; i >= 0; i--){
+    const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+    const key = d.toISOString().slice(0,10);
+    const rev = del.filter(o => o.ts[4].slice(0,10) === key).reduce((s,o) => s + orderTotal(o), 0);
+    days.push({label: d.toLocaleDateString('bn-BD',{weekday:'short'}) + ' ' + d.getDate(), rev});
+  }
+  const bySource = Object.keys(SOURCES).map(k => ({k, v: del.filter(o => o.source === k).reduce((s,o) => s + orderTotal(o), 0)}));
+  const byCourier = COURIERS.map(c => ({c, v: del.filter(o => o.courier === c.id).reduce((s,o) => s + orderTotal(o), 0)}));
+  const pm = new Map();
+  del.forEach(o => {
+    const e = pm.get(o.partName) || {name:o.partName, bn:o.partBn, units:0, rev:0, prof:0};
+    e.units += o.qty; e.rev += orderTotal(o); e.prof += orderProfit(o);
+    pm.set(o.partName, e);
+  });
+  const top = [...pm.values()].sort((a,b) => b.units - a.units).slice(0,5);
+  const catUnits = new Map();
+  del.forEach(o => {
+    const p = parts.find(x => x.id === o.partId);
+    const cat = p ? p.category : 'Other';
+    catUnits.set(cat, (catUnits.get(cat) || 0) + o.qty);
+  });
+  const totalCat = [...catUnits.values()].reduce((s,v) => s+v, 0);
+  const cats = [...catUnits.entries()].map(([k,v]) => ({k, v, pct: totalCat ? v/totalCat*100 : 0})).sort((a,b) => b.v - a.v);
+  const denom = del.length + ret.length;
+  return {
+    revenue, profit, delN: del.length, units,
+    retN: ret.length, retVal: ret.reduce((s,o) => s + orderTotal(o), 0),
+    retRate: denom ? ret.length / denom * 100 : 0,
+    aov: del.length ? revenue / del.length : 0,
+    days, bySource, byCourier, top, cats
+  };
+}
+function renderAnalytics(){
+  const a = analytics();
+  $('#anKpis').innerHTML = `
+    <div class="kpi red"><div class="k-label">মোট রেভিনিউ <span class="en">Total Revenue</span></div><div class="k-value mono">${money(a.revenue)}</div></div>
+    <div class="kpi green"><div class="k-label">গ্রস প্রফিট <span class="en">Gross Profit</span></div><div class="k-value mono">${money(a.profit)}</div></div>
+    <div class="kpi"><div class="k-label">ডেলিভারড অর্ডার <span class="en">Delivered Orders</span></div><div class="k-value mono">${a.delN}</div></div>
+    <div class="kpi"><div class="k-label">বিক্রিত ইউনিট <span class="en">Units Sold</span></div><div class="k-value mono">${a.units}</div></div>
+    <div class="kpi"><div class="k-label">গড় অর্ডার ভ্যালু <span class="en">AOV</span></div><div class="k-value mono">${moneyShort(a.aov)}</div></div>`;
+  const maxDay = Math.max(...a.days.map(d => d.rev), 1);
+  $('#anDaily').innerHTML = a.days.map(d => barRow(d.label, d.rev, maxDay)).join('');
+  const maxSrc = Math.max(...a.bySource.map(s => s.v), 1);
+  $('#anSource').innerHTML = a.bySource.map(s => barRow(`${SOURCES[s.k].en} · ${SOURCES[s.k].bn}`, s.v, maxSrc, SOURCES[s.k].color)).join('');
+  const maxC = Math.max(...a.byCourier.map(c => c.v), 1);
+  $('#anCourier').innerHTML = a.byCourier.map(c => barRow(`${c.c.icon} ${c.c.en}`, c.v, maxC)).join('');
+  const maxCat = Math.max(...a.cats.map(c => c.v), 1);
+  $('#anCat').innerHTML = a.cats.length
+    ? a.cats.map(c => barRow(`${esc(c.k)} · ${esc(CAT_BN[c.k] || 'অন্যান্য')}`, c.v, maxCat)).join('')
+    : `<div class="chart-empty">কোনো ডেলিভারড অর্ডার নেই — সিমুলেশন শুরু করুন।<br><span class="en">No delivered orders yet.</span></div>`;
+  $('#anTop').innerHTML = a.top.length
+    ? a.top.map((t,i) => `
+      <tr>
+        <td class="num" style="font-weight:800;color:${i===0 ? 'var(--red)' : 'var(--muted)'}">${i+1}</td>
+        <td><div style="font-weight:600;font-size:13px">${esc(t.name)}</div><div style="font-size:11.5px;color:var(--muted)">${esc(t.bn)}</div></td>
+        <td class="num mono">${t.units}</td>
+        <td class="num">${money(t.rev)}</td>
+        <td class="num hide-t" style="color:var(--green)">${money(t.prof)}</td>
+      </tr>`).join('')
+    : `<tr><td colspan="5"><div class="chart-empty">কোনো ডেলিভারড অর্ডার নেই — সিমুলেশন শুরু করুন।</div></td></tr>`;
+}
+
+/* ---------- report (print view) ---------- */
+function renderReport(){
+  const a = analytics();
+  const s = invStats(parts);
+  const byBrand = {};
+  parts.forEach(p => {
+    const b = byBrand[p.brand] || (byBrand[p.brand] = {n:0, units:0, val:0, pot:0});
+    b.n++; b.units += p.stock; b.val += p.buy*p.stock; b.pot += (p.sell-p.buy)*p.stock;
+  });
+  const brandRows = Object.entries(byBrand).map(([k,v]) => `
+    <tr><td><span class="badge brand">${esc(k)} <span class="en">${esc(BRAND_BN[k]||'অন্যান্য')}</span></span></td>
+    <td class="num mono">${v.n}</td><td class="num mono">${v.units}</td>
+    <td class="num">${money(v.val)}</td><td class="num" style="color:var(--green)">${money(v.pot)}</td></tr>`).join('');
+  const lowParts = parts.filter(p => p.stock <= LOW_STOCK);
+  const lowRows = lowParts.map(p => {
+    const tv = topVendors(p.brand, 1)[0];
+    return `<tr><td><span class="sku">${p.sku}</span></td>
+      <td>${esc(p.name)}<br><span style="font-size:11px;color:var(--muted)">${esc(p.nameBn)}</span></td>
+      <td class="num mono" style="color:var(--red)">${p.stock}</td>
+      <td>${tv ? esc(tv.en) + ' · <span class="mono" style="font-size:11px">' + esc(tv.phone) + '</span>' : '—'}</td></tr>`;
+  }).join('');
+  const recent = [...orders].sort((x,y) => new Date(y.ts[0]) - new Date(x.ts[0])).slice(0,10).map(o => `
+    <tr><td><span class="sku">${o.id}</span></td>
+    <td>${esc(o.partName)}</td><td class="num mono">×${o.qty}</td>
+    <td>${SOURCES[o.source].en}</td>
+    <td>${COURIER_BY_ID[o.courier].icon} ${esc(COURIER_BY_ID[o.courier].en)}</td>
+    <td>${o.status === 'returned' ? '↩️ Returned' : STAGES[o.stage].bn}</td>
+    <td class="num">${money(orderTotal(o))}</td></tr>`).join('');
+  $('#reportRoot').innerHTML = `
+    <div class="card rep-brand">
+      <div class="rep-logo">BP</div>
+      <div>
+        <h2>BikePartsBD<span style="color:var(--red)">.</span>net — ব্যবসা রিপোর্ট</h2>
+        <p>Kayi Corporation · Jashore, Bangladesh · রিপোর্ট তৈরি: ${new Date().toLocaleString('en-GB',{dateStyle:'medium',timeStyle:'short'})} · মুদ্রা: ${esc(currency)}</p>
+      </div>
+    </div>
+    <div class="kpis">
+      <div class="kpi red"><div class="k-label">মোট রেভিনিউ <span class="en">Total Revenue</span></div><div class="k-value mono">${money(a.revenue)}</div></div>
+      <div class="kpi green"><div class="k-label">গ্রস প্রফিট <span class="en">Gross Profit</span></div><div class="k-value mono">${money(a.profit)}</div></div>
+      <div class="kpi"><div class="k-label">ডেলিভারড অর্ডার <span class="en">Delivered</span></div><div class="k-value mono">${a.delN}</div></div>
+      <div class="kpi"><div class="k-label">বিক্রিত ইউনিট <span class="en">Units Sold</span></div><div class="k-value mono">${a.units}</div></div>
+      <div class="kpi red"><div class="k-label">রিটার্ন <span class="en">Returns</span></div><div class="k-value mono">${a.retN} · ${money(a.retVal)}</div></div>
+    </div>
+    <div class="card table-wrap">
+      <h3>🛵 কুরিয়ার পারফরম্যান্স <span class="en">Courier Performance</span></h3>
+      <table><thead><tr>
+        <th>কুরিয়ার <span class="en">Courier</span></th><th class="num">অর্ডার <span class="en">Orders</span></th>
+        <th class="num">ডেলিভারড <span class="en">Delivered</span></th><th class="num">রিটার্ন <span class="en">Returns</span></th>
+        <th class="num">রেভিনিউ <span class="en">Revenue</span></th><th class="num">প্রফিট <span class="en">Profit</span></th>
+      </tr></thead>
+      <tbody>${COURIERS.map(c => {
+        const cs = courierStats(c.id);
+        return `<tr><td>${c.icon} ${esc(c.en)}<br><span style="font-size:11px;color:var(--muted)">${esc(c.bn)}</span></td>
+          <td class="num mono">${cs.n}</td><td class="num mono">${cs.delivered}</td><td class="num mono">${cs.retN}</td>
+          <td class="num">${money(cs.revenue)}</td><td class="num" style="color:var(--green)">${money(cs.profit)}</td></tr>`;
+      }).join('')}</tbody></table>
+    </div>
+    <div class="card table-wrap">
+      <h3>🏷️ ব্র্যান্ড অনুযায়ী ইনভেন্টরি <span class="en">Inventory by Brand</span></h3>
+      <table><thead><tr>
+        <th>ব্র্যান্ড <span class="en">Brand</span></th><th class="num">SKU</th><th class="num">ইউনিট <span class="en">Units</span></th>
+        <th class="num">স্টক ভ্যালু <span class="en">Stock Value</span></th><th class="num">সম্ভাব্য প্রফিট <span class="en">Potential Profit</span></th>
+      </tr></thead><tbody>${brandRows}</tbody></table>
+    </div>
+    <div class="card table-wrap">
+      <h3>🚨 লো স্টক ও টপ ভেন্ডর <span class="en">Low Stock &amp; Top Vendor</span></h3>
+      <table><thead><tr>
+        <th>SKU</th><th>পার্ট <span class="en">Part</span></th><th class="num">স্টক <span class="en">Stock</span></th><th>টপ ভেন্ডর <span class="en">Top Vendor</span></th>
+      </tr></thead>
+      <tbody>${lowRows || '<tr><td colspan="4">✅ সব পার্টস পর্যাপ্ত স্টকে আছে — All parts stocked</td></tr>'}</tbody></table>
+    </div>
+    <div class="card table-wrap">
+      <h3>🏆 টপ পার্টস <span class="en">Top Parts</span></h3>
+      <table><thead><tr>
+        <th class="num">#</th><th>পার্ট <span class="en">Part</span></th><th class="num">ইউনিট <span class="en">Units</span></th>
+        <th class="num">রেভিনিউ <span class="en">Revenue</span></th><th class="num">প্রফিট <span class="en">Profit</span></th>
+      </tr></thead>
+      <tbody>${a.top.map((t,i) => `<tr><td class="num">${i+1}</td><td>${esc(t.name)}</td><td class="num mono">${t.units}</td><td class="num">${money(t.rev)}</td><td class="num" style="color:var(--green)">${money(t.prof)}</td></tr>`).join('') || '<tr><td colspan="5">—</td></tr>'}</tbody></table>
+    </div>
+    <div class="card table-wrap">
+      <h3>🧾 সাম্প্রতিক ১০ অর্ডার <span class="en">Recent 10 Orders</span></h3>
+      <table><thead><tr>
+        <th>অর্ডার <span class="en">Order</span></th><th>পার্ট <span class="en">Part</span></th><th class="num">Qty</th>
+        <th>সোর্স <span class="en">Source</span></th><th>কুরিয়ার <span class="en">Courier</span></th><th>স্ট্যাটাস <span class="en">Status</span></th><th class="num">টোটাল <span class="en">Total</span></th>
+      </tr></thead><tbody>${recent}</tbody></table>
+    </div>
+    <div style="font-size:11.5px;color:var(--muted);text-align:center;padding:12px 0 4px">
+      © 2026 Kayi Corporation · Jashore, Bangladesh · bikepartsbd.net — Inventory OS রিপোর্ট
+    </div>`;
+}
+function switchTab(name){
+  const b = $$('.tabs button').find(x => x.dataset.tab === name);
+  if (b) b.click();
+}
+function printReportView(){
+  switchTab('report');
+  setTimeout(() => window.print(), 450);
+}
+$('#printReport').addEventListener('click', () => window.print());
+$('#printReportLink').addEventListener('click', printReportView);
+
+/* =====================================================
+   VENDORS
+   ===================================================== */
+function waLink(phone, msg){
+  return 'https://wa.me/' + String(phone).replace(/\D/g,'') + '?text=' + encodeURIComponent(msg);
+}
+function vendorOrderMsg(v, partName, partBn, qty){
+  return `আসসালামু আলাইকুম! আমি Kayi Corporation (bikepartsbd.net), Jashore থেকে বলছি। জরুরি দরকার: ${partName} (${partBn}) — ${qty} পিস। দাম ও স্টক জানাবেন?
+
+Hello! I'm from Kayi Corporation (bikepartsbd.net), Jashore. Urgently need: ${partName} — qty ${qty}. Please share price & availability. Thanks!`;
+}
+function vendorHelloMsg(v){
+  return `আসসালামু আলাইকুম! আমি Kayi Corporation (bikepartsbd.net), Jashore থেকে বলছি। কিছু পার্টস অর্ডার করতে চাই। বর্তমান স্টক ও দাম জানাবেন?
+
+Hello! I'm from Kayi Corporation (bikepartsbd.net), Jashore. I'd like to order some parts. Please share current stock & prices. Thanks!`;
+}
+
+function renderVendors(){
+  $('#vendorCards').innerHTML = vendors.map(v => `
+    <div class="v-card">
+      <div class="v-top">
+        <div class="v-ava">${esc(v.en.split(' ').map(w=>w[0]).slice(0,2).join(''))}</div>
+        <div class="v-name">${esc(v.en)}<span class="bn">${esc(v.bn)}</span></div>
+        <button class="icon-btn v-edit" data-vedit="${v.id}" title="এডিট / Edit">✏️</button>
+      </div>
+      <div class="v-area">📍 ${esc(v.area)} <span class="bn">${esc(v.areaBn)}</span></div>
+      <div class="v-phone mono">📱 ${esc(v.phone)}</div>
+      <div class="v-brands">${v.brands.map(b => `<span class="badge brand">${esc(b)} <span class="en">${esc(BRAND_BN[b]||'')}</span></span>`).join('')}</div>
+      <div class="v-actions">
+        <a class="v-btn v-btn-call" href="tel:${esc(v.phone)}">📞 কল করুন <span class="en">Call</span></a>
+        <a class="v-btn v-btn-wa" href="${waLink(v.phone, vendorHelloMsg(v))}" target="_blank" rel="noopener">${waSvg} হোয়াটসঅ্যাপ <span class="en">WhatsApp</span></a>
+      </div>
+    </div>`).join('');
+}
+const waSvg = `<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" style="flex:0 0 auto"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>`;
+
+/* ---------- vendor matching ---------- */
+function vendorScore(v, brand){
+  return (v.brands.includes(brand) ? 2 : 0) + (v.brands.length >= 3 ? 0.3 : 0);
+}
+function topVendors(brand, n=3){
+  return [...vendors]
+    .sort((a,b) => vendorScore(b, brand) - vendorScore(a, brand) || a.id - b.id)
+    .slice(0, n);
+}
+
+/* ---------- vendor manager (add / edit / delete) ---------- */
+let editingVendorId = null;
+function openVendorModal(v){
+  editingVendorId = v ? v.id : null;
+  $('#vEn').value = v ? v.en : '';
+  $('#vBn').value = v ? v.bn : '';
+  $('#vPhone').value = v ? v.phone : '';
+  $('#vArea').value = v ? v.area : '';
+  $('#vAreaBn').value = v ? v.areaBn : '';
+  $('#vBrands').innerHTML = BRAND_LIST.map(([k,en,bn]) =>
+    `<label class="brand-check"><input type="checkbox" value="${en}" ${v && v.brands.includes(en) ? 'checked' : ''}> ${en} <span class="en">${bn}</span></label>`).join('');
+  $('#vDelete').hidden = !v;
+  $('#vendorModal').hidden = false;
+  document.body.style.overflow = 'hidden';
+}
+function closeVendorModal(){ $('#vendorModal').hidden = true; document.body.style.overflow = ''; }
+$('#addVendorBtn').addEventListener('click', () => openVendorModal(null));
+$('#closeVendor').addEventListener('click', closeVendorModal);
+$('#vCancel').addEventListener('click', closeVendorModal);
+$('#vendorModal').addEventListener('click', e => { if (e.target === $('#vendorModal')) closeVendorModal(); });
+$('#vendorCards').addEventListener('click', e => {
+  const b = e.target.closest('[data-vedit]');
+  if (b){ const v = vendors.find(x => x.id === Number(b.dataset.vedit)); if (v) openVendorModal(v); }
+});
+$('#vendorForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const en = $('#vEn').value.trim();
+  const phone = $('#vPhone').value.trim();
+  if (!en){ toast('⚠️ ভেন্ডরের নাম দিন <span class="en" style="font-size:11px;opacity:.8">Vendor name required</span>', 'red'); $('#vEn').focus(); return; }
+  if (!/^\+?[0-9\-\s]{8,18}$/.test(phone)){ toast('⚠️ সঠিক মোবাইল নম্বর দিন — e.g. +8801XXX-XXXXXX <span class="en" style="font-size:11px;opacity:.8">Valid phone required</span>', 'red'); $('#vPhone').focus(); return; }
+  const bn = $('#vBn').value.trim() || en;
+  const brands = $$('#vBrands input:checked').map(i => i.value);
+  if (!brands.length) brands.push('Other');
+  const data = {en, bn, phone, area: $('#vArea').value.trim() || '—', areaBn: $('#vAreaBn').value.trim() || '—', brands};
+  if (editingVendorId){
+    const v = vendors.find(x => x.id === editingVendorId);
+    if (v){ Object.assign(v, data); store.set('bpbd_vendors', vendors); toast(`✏️ <b>${esc(v.en)}</b> আপডেট হয়েছে <span class="en" style="font-size:11px;opacity:.8">Vendor updated</span>`, 'green'); }
+  } else {
+    const id = vendors.reduce((m,x) => Math.max(m,x.id), 0) + 1;
+    vendors.push({id, ...data});
+    store.set('bpbd_vendors', vendors);
+    toast(`➕ <b>${esc(en)}</b> ভেন্ডর যোগ হয়েছে <span class="en" style="font-size:11px;opacity:.8">Vendor added</span>`, 'green');
+  }
+  renderVendors();
+  closeVendorModal();
+});
+$('#vDelete').addEventListener('click', () => {
+  const v = vendors.find(x => x.id === editingVendorId);
+  if (v && confirm(`Delete vendor "${v.en}"? — ভেন্ডরটি মুছবেন?`)){
+    vendors = vendors.filter(x => x.id !== v.id);
+    store.set('bpbd_vendors', vendors);
+    renderVendors(); closeVendorModal();
+    toast(`🗑 <b>${esc(v.en)}</b> ডিলিট হয়েছে <span class="en" style="font-size:11px;opacity:.8">Vendor removed</span>`);
+  }
+});
+
+/* ---------- emergency restock ---------- */
+function renderRestock(){
+  const low = parts.filter(p => p.stock <= LOW_STOCK);
+  if (!low.length){
+    $('#restockBody').innerHTML = `<div class="empty" style="font-size:15px">✅ সব পার্টস পর্যাপ্ত স্টকে আছে!<br><span class="en">All parts are sufficiently stocked. Low-stock threshold: ≤ ${LOW_STOCK} pcs.</span></div>`;
+    return;
+  }
+  $('#restockBody').innerHTML = low.map(p => {
+    const suggest = Math.max(6, LOW_STOCK*2 - p.stock);
+    const vens = topVendors(p.brand, 3);
+    return `<div class="restock-part">
+      <div class="rp-head">
+        <span class="badge brand">${esc(p.brand)}</span>
+        <div class="rp-name">${esc(p.name)}<span class="bn">${esc(p.nameBn)}</span></div>
+        <div class="rp-qty">
+          <span class="badge stock-low">স্টক: ${p.stock} / ${LOW_STOCK}</span><br>
+          <span class="en" style="font-size:11px;color:var(--faint)">সাজেস্টেড অর্ডার: <b class="mono">${suggest} পিস</b></span>
+        </div>
+      </div>
+      ${vens.map((v,i) => `
+        <div class="rp-vendor">
+          ${i === 0 ? '<span class="best-tag">সেরা ম্যাচ</span>' : ''}
+          <div class="rv-info">
+            <div class="rv-name">${esc(v.en)}<span class="bn">${esc(v.bn)}</span></div>
+            <div class="rv-meta">📍 ${esc(v.area)} · <span class="mono">${esc(v.phone)}</span></div>
+          </div>
+          <div class="rv-actions">
+            <a class="rv-btn call" href="tel:${esc(v.phone)}">📞 কল <span class="en">Call</span></a>
+            <a class="rv-btn wa" href="${waLink(v.phone, vendorOrderMsg(v, p.name, p.nameBn, suggest))}" target="_blank" rel="noopener">${waSvg} WhatsApp</a>
+          </div>
+        </div>`).join('')}
+    </div>`;
+  }).join('');
+}
+function openRestock(){
+  renderRestock();
+  $('#restockModal').hidden = false;
+  document.body.style.overflow = 'hidden';
+}
+function closeRestock(){
+  $('#restockModal').hidden = true;
+  document.body.style.overflow = '';
+}
+$('#restockBtn').addEventListener('click', openRestock);
+$('#restockBtnMobile').addEventListener('click', openRestock);
+$('#closeRestock').addEventListener('click', closeRestock);
+$('#restockModal').addEventListener('click', e => { if (e.target === $('#restockModal')) closeRestock(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape'){ closeRestock(); closeVendorModal(); } });
+
+/* =====================================================
+   SIDE PANEL + FEED
+   ===================================================== */
+function renderSide(){
+  const s = invStats(parts);
+  const today = new Date().toDateString();
+  const deliveredToday = orders.filter(o => isDelivered(o) && new Date(o.ts[4]).toDateString() === today).length;
+
+  $('#sideKpis').innerHTML = `
+    <div class="side-kpi"><div class="s-label">মোট পার্টস <span class="en">Total Parts</span></div><div class="s-value mono">${s.n}</div></div>
+    <div class="side-kpi"><div class="s-label">স্টক ইউনিট <span class="en">Units</span></div><div class="s-value mono">${s.units}</div></div>
+    <div class="side-kpi red"><div class="s-label">লো স্টক <span class="en">Low Stock</span></div><div class="s-value mono">${s.low}</div></div>
+    <div class="side-kpi"><div class="s-label">আজ ডেলিভারড <span class="en">Delivered Today</span></div><div class="s-value mono">${deliveredToday}</div></div>`;
+
+  $('#sideCouriers').innerHTML = COURIERS.map(c => {
+    const st = courierStats(c.id);
+    return `<div class="side-courier-row">
+      <span class="sc-ico">${c.icon}</span>
+      <div class="sc-info"><div class="sc-name">${esc(c.en)}<span class="bn">${esc(c.bn)}</span></div></div>
+      <div class="sc-nums"><span class="r">${money(st.revenue)}</span> · <span class="p">+${money(st.profit)}</span></div>
+    </div>`;
+  }).join('');
+}
+
+function renderFeed(){
+  if (!feed.length){
+    $('#simFeed').innerHTML = `<div class="feed-empty">— লাইভ ফিড ফাঁকা · start the simulation to watch orders stream in —</div>`;
+    return;
+  }
+  $('#simFeed').innerHTML = feed.map(f => {
+    const t = new Date(f.t);
+    const src = f.kind === 'order' ? SOURCES[f.extra].color : (f.color || 'var(--faint)');
+    return `<div class="feed-item">
+      <span class="feed-dot" style="background:${src}"></span>
+      <div><p>${f.html}</p><time>${t.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}</time></div>
+    </div>`;
+  }).join('');
+}
+
+/* =====================================================
+   LIVE SIMULATION
+   ===================================================== */
+function simSource(){
+  const r = Math.random();
+  return r < 0.45 ? 'messenger' : r < 0.8 ? 'whatsapp' : 'website';
+}
+function placeSimOrder(){
+  const avail = parts.filter(p => p.stock > 0);
+  if (!avail.length){
+    feedLog('sys', null, `⚠️ সব পার্টস স্টকআউট — নতুন অর্ডার নেওয়া যাচ্ছে না! <span class="en" style="font-size:10px">All parts out of stock</span>`);
+    return;
+  }
+  const part = rand(avail);
+  const qty = Math.random() < 0.3 ? 2 : 1;
+  const courier = rand(COURIERS).id;
+  const source = simSource();
+  const o = mkOrder(part, qty, source, courier, 0, 0);
+  orders.push(o);
+  part.stock -= qty;
+  saveAll();
+  const src = SOURCES[source];
+  feedLog('order', null, `<span class="tag" style="background:${src.color}">${src.en}</span><b>${esc(o.id)}</b> নতুন অর্ডার — ${esc(part.name)} ×${qty} → ${COURIER_BY_ID[courier].icon} ${esc(COURIER_BY_ID[courier].en)} <b>${money(orderTotal(o))}</b>`, source);
+  if (part.stock === 0){
+    feedLog('sys', null, `⚠️ <b>${esc(part.name)}</b> স্টকআউট! <span class="en" style="font-size:10px">Out of stock — restock needed</span>`);
+  }
+  pendingFlash = {id: part.id, field: 'stock', delta: -qty};
+}
+function advanceRandomOrder(){
+  const candidates = orders.filter(o => o.stage < 4);
+  if (!candidates.length) return;
+  advanceOrder(rand(candidates), false);
+}
+function simTick(){
+  if (Math.random() < 0.68) placeSimOrder();
+  if (Math.random() < 0.62) advanceRandomOrder();
+  if (Math.random() < 0.05){
+    const cand = orders.filter(isDelivered);
+    if (cand.length) markReturned(rand(cand), true);
+  }
+  renderAll();
+}
+function startSim(){
+  if (sim.running) return;
+  sim.running = true;
+  feedLog('sys', null, `▶️ লাইভ সিমুলেশন শুরু — Messenger, WhatsApp ও Website থেকে অর্ডার আসছে… <span class="en" style="font-size:10px">Live simulation started</span>`);
+  // instant burst so it feels alive immediately
+  setTimeout(() => { if (sim.running) placeSimOrder(); }, 400);
+  setTimeout(() => { if (sim.running) advanceRandomOrder(); }, 900);
+  sim.timer = setInterval(simTick, 2600);
+  updateSimUI();
+}
+function stopSim(){
+  if (!sim.running) return;
+  sim.running = false;
+  clearInterval(sim.timer);
+  feedLog('sys', null, `⏹️ সিমুলেশন থামানো হয়েছে <span class="en" style="font-size:10px">Simulation stopped</span>`);
+  updateSimUI();
+}
+function updateSimUI(){
+  const running = sim.running;
+  ['simToggleTop','simToggleSide','simToggleMobile'].forEach(id => {
+    const b = $('#'+id);
+    if (b) b.classList.toggle('running', running);
+  });
+  const icon = running ? '⏹' : '▶';
+  const label = running ? 'সিমুলেশন থামান' : 'লাইভ সিমুলেশন শুরু করুন';
+  const en = running ? 'Stop Simulation' : 'Start Live Simulation';
+  $('#simToggleTopIcon').textContent = icon;
+  $('#simToggleTopLabel').textContent = label;
+  $('#simToggleSideIcon').textContent = icon;
+  $('#simToggleSideLabel').textContent = label;
+  $('#simToggleSide .en').textContent = en;
+  const mob = $('#simToggleMobile');
+  mob.innerHTML = running ? '⏹ সিমুলেশন থামান <span class="en">Stop</span>' : '▶ সিমুলেশন শুরু <span class="en">Start</span>';
+}
+$('#simToggleTop').addEventListener('click', () => sim.running ? stopSim() : startSim());
+$('#simToggleSide').addEventListener('click', () => sim.running ? stopSim() : startSim());
+$('#simToggleMobile').addEventListener('click', () => sim.running ? stopSim() : startSim());
+
+/* =====================================================
+   TABS · SEARCH · FILTERS · THEME
+   ===================================================== */
+const state = {brandFilter:'All', search:'', lowOnly:false, orderSearch:''};
+
+$$('.tabs button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    $$('.tabs button').forEach(b => b.classList.toggle('active', b === btn));
+    $$('.tab').forEach(t => t.classList.remove('active'));
+    const t = btn.dataset.tab;
+    $('#tab-' + t).classList.add('active');
+    if (t === 'returns') renderReturns();
+    else if (t === 'analytics') renderAnalytics();
+    else if (t === 'report') renderReport();
+  });
+});
+
+$('#brandChips').addEventListener('click', e => {
+  const chip = e.target.closest('[data-brand]');
+  if (!chip) return;
+  state.brandFilter = chip.dataset.brand;
+  renderBrandChips(); renderInventory();
+});
+$('#searchParts').addEventListener('input', e => {
+  state.search = e.target.value;
+  renderInventory();
+});
+$('#lowOnly').addEventListener('change', e => {
+  state.lowOnly = e.target.checked;
+  renderInventory();
+});
+
+/* theme */
+function applyTheme(t){
+  document.documentElement.dataset.theme = t;
+  store.set('bpbd_theme', t);
+  const dark = t === 'dark';
+  $('#themeIcon').textContent = dark ? '☀️' : '🌙';
+  $('#themeLabel').textContent = dark ? 'লাইট মোড' : 'ডার্ক মোড';
+  const tc = document.querySelector('meta[name="theme-color"]');
+  if (tc) tc.setAttribute('content', dark ? '#0c0e13' : '#e10600');
+}
+$('#themeToggle').addEventListener('click', () => {
+  applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+});
+applyTheme(store.get('bpbd_theme', window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+
+/* toasts */
+function toast(html, type){
+  const el = document.createElement('div');
+  el.className = 'toast' + (type ? ' ' + type : '');
+  el.innerHTML = html;
+  $('#toasts').appendChild(el);
+  setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 320); }, 2800);
+}
+
+/* ---------- CSV export (base prices in BDT) ---------- */
+function csvCell(v){
+  const s = String(v ?? '');
+  return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g,'""') + '"' : s;
+}
+function downloadCSV(filename, rows){
+  const csv = '\uFEFF' + rows.map(r => r.map(csvCell).join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+}
+function exportInventoryCSV(){
+  const rows = [['SKU','Name (EN)','নাম (BN)','Brand','Category','Buy (BDT)','Sell (BDT)','Stock','Profit (BDT)','Margin %']];
+  parts.forEach(p => rows.push([p.sku, p.name, p.nameBn, p.brand, p.category, p.buy, p.sell, p.stock, p.sell - p.buy, ((p.sell - p.buy) / p.sell * 100).toFixed(1) + '%']));
+  downloadCSV('bpbd-inventory-' + new Date().toISOString().slice(0,10) + '.csv', rows);
+  toast('📥 ইনভেন্টরি CSV ডাউনলোড হচ্ছে… <span class="en" style="font-size:11px;opacity:.8">Inventory CSV (prices in BDT)</span>');
+}
+function exportOrdersCSV(){
+  const rows = [['Order ID','Customer (EN)','কাস্টমার (BN)','City','Part','Qty','Source','Courier','Stage (EN)','স্ট্যাটাস (BN)','Status','Total (BDT)','Profit (BDT)','Returned At','Placed','Picked Up','In Transit','Out for Delivery','Delivered']];
+  orders.forEach(o => rows.push([
+    o.id, o.custEn, o.custBn, o.city, o.partName, o.qty,
+    SOURCES[o.source].en, COURIER_BY_ID[o.courier].en,
+    STAGES[o.stage].en, STAGES[o.stage].bn,
+    o.status === 'returned' ? 'Returned' : 'Active',
+    orderTotal(o), orderProfit(o),
+    o.returnedAt ? dtStr(o.returnedAt) : '',
+    o.ts[0] ? dtStr(o.ts[0]) : '', o.ts[1] ? dtStr(o.ts[1]) : '',
+    o.ts[2] ? dtStr(o.ts[2]) : '', o.ts[3] ? dtStr(o.ts[3]) : '',
+    o.ts[4] ? dtStr(o.ts[4]) : ''
+  ]));
+  downloadCSV('bpbd-orders-' + new Date().toISOString().slice(0,10) + '.csv', rows);
+  toast('📥 অর্ডার CSV ডাউনলোড হচ্ছে… <span class="en" style="font-size:11px;opacity:.8">Orders CSV (prices in BDT)</span>');
+}
+$('#exportInvCsv').addEventListener('click', exportInventoryCSV);
+$('#exportOrdersCsv').addEventListener('click', exportOrdersCSV);
+
+/* reset demo data */
+$('#resetDemo').addEventListener('click', () => {
+  if (confirm('ডেমো ডেটা রিসেট করবেন? সব পরিবর্তন মুছে যাবে।\nReset demo data? All changes will be cleared.')){
+    stopSim();
+    ['bpbd_parts','bpbd_orders','bpbd_feed','bpbd_vendors','bpbd_v'].forEach(k => localStorage.removeItem(k));
+    location.reload();
+  }
+});
+
+/* ---------- currency init ---------- */
+$('#currencySel').value = currency;
+$('#currencySel').addEventListener('change', e => {
+  currency = e.target.value;
+  store.set('bpbd_currency', currency);
+  renderAll();
+});
+const cachedRates = store.get('bpbd_rates', null);
+if (cachedRates && cachedRates.t && Date.now() - cachedRates.t < 6*3600e3 && cachedRates.r){
+  Object.keys(cachedRates.r).forEach(k => { if (CURRENCIES[k]) CURRENCIES[k].rate = cachedRates.r[k]; });
+  updateRateInfo(cachedRates.src || 'ক্যাশ');
+} else {
+  updateRateInfo('ডিফল্ট');
+}
+fetchRates();
+
+/* ---------- boot ---------- */
+renderBrandChips();
+renderAll();
+updateSimUI();
+</script>
+</body>
+</html>
