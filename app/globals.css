@@ -1,0 +1,144 @@
+@import 'tailwindcss';
+
+/* Dark mode driven by a `.dark` class on <html> (set by the inline theme script) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* PonDer Alo brand — the red of a Bengali news masthead */
+  --color-brand: #d31217;
+  --color-brand-dark: #a30d11;
+  --color-brand-darker: #7d090c;
+  --color-brand-soft: #fdecec;
+
+  --color-ink: #14161a;
+  --color-ink-soft: #3d434d;
+  --color-muted: #6b7280;
+
+  --font-sans: 'Inter', 'Hind Siliguri', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-bn: 'Hind Siliguri', 'Inter', 'Noto Sans Bengali', system-ui, sans-serif;
+
+  --shadow-card: 0 1px 2px rgba(16, 24, 40, 0.06), 0 1px 3px rgba(16, 24, 40, 0.1);
+}
+
+:root {
+  --header-h: 54px;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: #fff;
+  color: var(--color-ink);
+  font-family: var(--font-bn);
+  font-feature-settings: 'kern' 1;
+}
+
+.dark body {
+  background: #0d0f13;
+  color: #e8eaee;
+}
+
+/* Bengali text needs a touch more line-height than Latin */
+.bn-text {
+  font-family: var(--font-bn);
+  line-height: 1.9;
+  font-size: 1.0625rem;
+}
+
+.bn-lead {
+  line-height: 1.75;
+}
+
+/* Utility: hide scrollbars on the horizontal category strip */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Headline hover, the way a news portal does it */
+.headline-hover {
+  transition: color 0.15s ease;
+}
+.headline-hover:hover {
+  color: var(--color-brand);
+}
+
+/* Section heading rule */
+.rule-title::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--color-brand);
+  border-radius: 2px;
+}
+
+/* Ticker animation for the breaking-news bar */
+@keyframes pa-ticker {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+.ticker-track {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: pa-ticker 45s linear infinite;
+}
+.ticker-wrap:hover .ticker-track {
+  animation-play-state: paused;
+}
+
+/* Article body typography */
+.article-body p {
+  margin-bottom: 1.15em;
+}
+.article-body p:first-of-type::first-letter {
+  float: left;
+  font-size: 3.1em;
+  line-height: 0.82;
+  padding: 0.06em 0.12em 0 0;
+  color: var(--color-brand);
+  font-weight: 700;
+}
+.article-body blockquote {
+  border-inline-start: 4px solid var(--color-brand);
+  padding: 0.6rem 1rem;
+  margin: 1.4rem 0;
+  background: var(--color-brand-soft);
+  border-radius: 0 8px 8px 0;
+  font-weight: 600;
+}
+.dark .article-body blockquote {
+  background: rgba(211, 18, 23, 0.14);
+}
+
+::selection {
+  background: var(--color-brand);
+  color: #fff;
+}
+
+/* Skeleton shimmer for images while they decode */
+.img-skeleton {
+  background: linear-gradient(90deg, #eef0f3 25%, #f7f8fa 50%, #eef0f3 75%);
+  background-size: 200% 100%;
+  animation: pa-shimmer 1.4s infinite;
+}
+@keyframes pa-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

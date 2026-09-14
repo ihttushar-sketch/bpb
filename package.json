@@ -1,0 +1,27 @@
+{
+  "name": "ponder-alo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PonDer Alo — a Bengali news portal (structure & design inspired by Prothom Alo). Secretariat & Executed by Rajit Chakladar.",
+  "scripts": {
+    "dev": "next dev -H 0.0.0.0 -p 3000",
+    "build": "next build",
+    "start": "next start -H 0.0.0.0 -p 3000",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@fontsource/hind-siliguri": "^5.3.0",
+    "@fontsource/inter": "^5.3.0",
+    "next": "^15.5.4",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.13",
+    "@types/node": "^22.10.2",
+    "@types/react": "^19.1.9",
+    "@types/react-dom": "^19.1.7",
+    "tailwindcss": "^4.1.13",
+    "typescript": "^5.7.2"
+  }
+}
